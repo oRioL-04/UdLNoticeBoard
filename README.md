@@ -14,9 +14,11 @@ Web application for university notice board (Wallapop style) with React and Flas
   - Filter by category
   - View full details on click
   - Create new posts
+  - **🤖 AI Description Generator** - Generate professional descriptions from titles
   - Local SQLite database
   - Pre-loaded sample posts
   - UdL corporate colors (#8c0f57)
+  - Free AI powered by Ollama (llama3.2:1b)
 
 ## Project Structure
 
