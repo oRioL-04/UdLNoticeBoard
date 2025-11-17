@@ -594,91 +594,91 @@ def detectar_idioma(texto):
 def generar_respuesta_chat(pregunta, anuncios, idioma='english'):
     """
     Genera respuesta del chatbot usando IA con contexto de los anuncios
+    Incluye búsqueda inteligente y siempre añade IDs clicables
     """
-    # Preparar contexto con los anuncios incluyendo IDs
-    anuncios_texto = []
-    posts_map = {}  # Para mapear títulos a IDs
+    import re
     
-    for anuncio in anuncios:
-        categoria_label = {
-            'evento': 'Event',
-            'servicio': 'Service', 
-            'producto': 'Product/Rental'
-        }.get(anuncio['categoria'], anuncio['categoria'])
-        
-        precio_text = 'Free' if anuncio['precio'] == 0 else f"€{anuncio['precio']}"
-        
-        anuncios_texto.append(
-            f"- [ID:{anuncio['id']}] [{categoria_label}] {anuncio['titulo']}: {anuncio['descripcion'][:100]}... "
-            f"(Price: {precio_text}, Location: {anuncio['ubicacion']})"
-        )
-        
-        # Guardar mapeo de título a ID
-        posts_map[anuncio['titulo'].lower()] = anuncio['id']
+    # PASO 1: Buscar posts relevantes primero
+    pregunta_lower = pregunta.lower()
+    posts_relevantes = buscar_posts_relevantes(pregunta_lower, anuncios)
     
-    contexto_anuncios = "\n".join(anuncios_texto[:15])  # Limitar a 15 anuncios para no saturar
+    # Preparar contexto enfocado en posts relevantes
+    if posts_relevantes:
+        # Si encontramos posts relevantes, enfocarnos en ellos
+        anuncios_contexto = posts_relevantes[:8]  # Máximo 8 posts relevantes
+    else:
+        # Si no, usar todos pero limitados
+        anuncios_contexto = anuncios[:10]
     
-    # Instrucciones según idioma
-    instrucciones_idioma = {
-        'spanish': """Responde en ESPAÑOL. 
-IMPORTANTE: Cuando menciones un post, SIEMPRE incluye su ID entre corchetes así: [ID:12]
-Ejemplo: "Tenemos el [ID:12] Torneo de Fútbol Universitario disponible"
-""",
-        'catalan': """Respon en CATALÀ.
-IMPORTANT: Quan mencionas un post, SEMPRE inclou el seu ID entre claudàtors així: [ID:12]
-Exemple: "Tenim el [ID:12] Torneig de Futbol Universitari disponible"
-""",
-        'english': """Answer in ENGLISH.
-IMPORTANT: When mentioning a post, ALWAYS include its ID in brackets like: [ID:12]
-Example: "We have the [ID:12] University Football Tournament available"
-"""
-    }
+    # Construir contexto compacto
+    contexto_simple = "POSTS AVAILABLE:\n"
+    for anuncio in anuncios_contexto:
+        precio = "Free" if anuncio['precio'] == 0 else f"€{anuncio['precio']}"
+        cat = {'evento': 'EVENT', 'servicio': 'SERVICE', 'producto': 'PRODUCT'}[anuncio['categoria']]
+        contexto_simple += f"[ID:{anuncio['id']}] {anuncio['titulo']} - {cat} - {anuncio['descripcion'][:60]}... (Price: {precio})\n"
     
-    instruccion = instrucciones_idioma.get(idioma, instrucciones_idioma['english'])
-    
-    # Usar IA con prompt muy específico y contexto limitado
+    # PASO 2: Usar IA con prompt mejorado
     try:
-        # Construir un contexto MUY específico solo con info relevante
-        contexto_simple = "Available posts:\n"
-        for anuncio in anuncios:
-            precio = "Free" if anuncio['precio'] == 0 else f"€{anuncio['precio']}"
-            contexto_simple += f"[ID:{anuncio['id']}] {anuncio['titulo']} - {anuncio['descripcion'][:80]}... Price: {precio}, Location: {anuncio['ubicacion']}\n"
-        
-        # Prompt ultra-específico
+        # Plantillas según idioma con EJEMPLOS de respuesta
         if idioma == 'spanish':
-            system = "Eres un asistente de tablón universitario. Responde de forma natural y conversacional EN ESPAÑOL."
-            rules = """REGLAS ESTRICTAS:
-1. USA SOLO la información de los posts arriba
-2. Si preguntan por algo que NO está en los posts, di "No hay [eso] disponible actualmente"
-3. Cuando menciones un post, SIEMPRE incluye [ID:X]
-4. Sé conversacional y natural
-5. NO inventes detalles que no están en los posts"""
-        elif idioma == 'catalan':
-            system = "Ets un assistent de tauler universitari. Respon de forma natural i conversacional EN CATALÀ."
-            rules = """REGLES ESTRICTES:
-1. USA NOMÉS la informació dels posts de dalt
-2. Si pregunten per algo que NO hi ha als posts, digues "No hi ha [això] disponible actualment"
-3. Quan mencionas un post, SEMPRE inclou [ID:X]
-4. Sigues conversacional i natural
-5. NO inventis detalls que no hi són als posts"""
-        else:
-            system = "You are a university notice board assistant. Answer naturally and conversationally IN ENGLISH."
-            rules = """STRICT RULES:
-1. USE ONLY the information from the posts above
-2. If asked about something NOT in the posts, say "There are no [that] available currently"
-3. When mentioning a post, ALWAYS include [ID:X]
-4. Be conversational and natural
-5. DO NOT invent details not in the posts"""
-        
-        prompt = f"""{system}
+            ejemplo = """Pregunta ejemplo: "¿Hay alguna fiesta?"
+Respuesta ejemplo: "¡Sí! Tenemos la [ID:1] University Party - Welcome 2025 el 20 de noviembre. ¡No te la pierdas!"
 
-{rules}
+Pregunta ejemplo: "Necesito clases de mates"
+Respuesta ejemplo: "Perfecto, tenemos las [ID:11] Statistics Classes disponibles. Un estudiante de matemáticas ofrece clases. ¡Contáctale!"""
+            
+            prompt = f"""Eres un asistente amigable de tablón universitario. Responde EN ESPAÑOL.
+
+REGLA CRÍTICA: SIEMPRE menciona posts con este formato: [ID:número] Título
+Ejemplo: "Tenemos la [ID:1] University Party disponible"
 
 {contexto_simple}
 
+{ejemplo}
+
+Pregunta: {pregunta}
+
+Respuesta natural (incluye SIEMPRE [ID:X] cuando menciones un post):"""
+
+        elif idioma == 'catalan':
+            ejemplo = """Pregunta exemple: "Hi ha alguna festa?"
+Resposta exemple: "Sí! Tenim la [ID:1] University Party - Welcome 2025 el 20 de novembre. No te la perdis!"
+
+Pregunta exemple: "Necessito classes de mates"
+Resposta exemple: "Perfecte, tenim les [ID:11] Statistics Classes disponibles. Un estudiant de matemàtiques ofereix classes. Contacta'l!"""
+            
+            prompt = f"""Ets un assistent amigable de tauler universitari. Respon EN CATALÀ.
+
+REGLA CRÍTICA: SEMPRE menciona posts amb aquest format: [ID:número] Títol
+Exemple: "Tenim la [ID:1] University Party disponible"
+
+{contexto_simple}
+
+{ejemplo}
+
+Pregunta: {pregunta}
+
+Resposta natural (inclou SEMPRE [ID:X] quan mencionas un post):"""
+
+        else:
+            ejemplo = """Example question: "Any parties?"
+Example answer: "Yes! We have the [ID:1] University Party - Welcome 2025 on November 20th. Don't miss it!"
+
+Example question: "Need math tutoring"
+Example answer: "Perfect, we have [ID:11] Statistics Classes available. A math student offers tutoring. Contact them!"""
+            
+            prompt = f"""You are a friendly university notice board assistant. Answer IN ENGLISH.
+
+CRITICAL RULE: ALWAYS mention posts with this format: [ID:number] Title
+Example: "We have the [ID:1] University Party available"
+
+{contexto_simple}
+
+{ejemplo}
+
 Question: {pregunta}
 
-Answer (2-3 sentences, natural and friendly):"""
+Natural answer (ALWAYS include [ID:X] when mentioning a post):"""
 
         response = requests.post(
             'http://localhost:11434/api/generate',
@@ -687,10 +687,10 @@ Answer (2-3 sentences, natural and friendly):"""
                 "prompt": prompt,
                 "stream": False,
                 "options": {
-                    "temperature": 0.2,
-                    "num_predict": 120,
-                    "top_k": 20,
-                    "top_p": 0.7
+                    "temperature": 0.3,
+                    "num_predict": 150,
+                    "top_k": 30,
+                    "top_p": 0.8
                 }
             },
             timeout=15
@@ -699,8 +699,8 @@ Answer (2-3 sentences, natural and friendly):"""
         if response.status_code == 200:
             respuesta = response.json()['response'].strip()
             
-            # Limpiar prefijos
-            prefixes = ["Answer:", "Response:", "Respuesta:", "Resposta:"]
+            # Limpiar prefijos comunes
+            prefixes = ["Answer:", "Response:", "Respuesta:", "Resposta:", "Natural answer:"]
             for prefix in prefixes:
                 if respuesta.lower().startswith(prefix.lower()):
                     respuesta = respuesta[len(prefix):].strip()
@@ -708,9 +708,14 @@ Answer (2-3 sentences, natural and friendly):"""
             
             respuesta = respuesta.strip('"').strip("'").strip()
             
-            # Extraer IDs mencionados
-            import re
+            # PASO 3: Verificar y añadir IDs si faltan
             ids_encontrados = re.findall(r'\[ID:(\d+)\]', respuesta)
+            
+            # Si la IA no incluyó IDs pero encontramos posts relevantes, añadirlos
+            if len(ids_encontrados) == 0 and posts_relevantes:
+                respuesta = mejorar_respuesta_con_ids(respuesta, posts_relevantes, idioma)
+                ids_encontrados = re.findall(r'\[ID:(\d+)\]', respuesta)
+            
             posts_mencionados = [int(id) for id in ids_encontrados]
             
             if len(respuesta) > 10:
@@ -719,44 +724,134 @@ Answer (2-3 sentences, natural and friendly):"""
     except Exception as e:
         print(f"Error en IA: {e}")
     
-    # Fallback si la IA falla
+    # PASO 4: Fallback mejorado
     respuesta_simple, posts_ids = generar_respuesta_simple(pregunta, anuncios, idioma)
     return respuesta_simple, posts_ids
 
-def generar_respuesta_simple(pregunta, anuncios, idioma='english'):
+def buscar_posts_relevantes(pregunta_lower, anuncios):
     """
-    Genera respuesta simple sin IA (fallback) - búsqueda por keywords
+    Busca posts relevantes usando keywords inteligentes
     """
-    pregunta_lower = pregunta.lower()
+    # Keywords por categoría en múltiples idiomas
+    keywords_evento = ['event', 'evento', 'esdeveniment', 'party', 'fiesta', 'festa', 
+                       'tournament', 'torneo', 'torneig', 'talk', 'charla', 'xerrada',
+                       'deadline', 'fecha', 'data', 'conference', 'conferencia']
     
-    # Buscar posts que coincidan con palabras clave de la pregunta
-    palabras_pregunta = pregunta_lower.split()
+    keywords_servicio = ['class', 'clase', 'classes', 'tutoring', 'tutor', 'tutorial',
+                         'teacher', 'profesor', 'professor', 'help', 'ayuda', 'ajuda',
+                         'lesson', 'lección', 'lliçó', 'course', 'curso']
+    
+    keywords_producto = ['room', 'habitación', 'habitació', 'apartment', 'piso', 'flat',
+                         'rent', 'alquiler', 'lloguer', 'sell', 'vender', 'vendre',
+                         'book', 'libro', 'llibre', 'notes', 'apuntes', 'apunts']
+    
+    # Keywords específicos
+    keywords_matematicas = ['math', 'mathematics', 'mates', 'matemáticas', 'matemàtiques',
+                            'calculus', 'cálculo', 'càlcul', 'statistics', 'estadística',
+                            'estadísticas', 'estadístiques', 'algebra', 'àlgebra']
+    
     posts_relevantes = []
+    scores = []
     
     for anuncio in anuncios:
         titulo_lower = anuncio['titulo'].lower()
         desc_lower = anuncio['descripcion'].lower()
+        texto_completo = f"{titulo_lower} {desc_lower}"
         
-        # Si alguna palabra de la pregunta está en el título o descripción
+        score = 0
+        
+        # Puntuación por coincidencia de palabras específicas
+        palabras_pregunta = pregunta_lower.split()
         for palabra in palabras_pregunta:
             if len(palabra) > 3:  # Solo palabras significativas
-                if palabra in titulo_lower or palabra in desc_lower:
-                    if anuncio not in posts_relevantes:
-                        posts_relevantes.append(anuncio)
-                    break
+                if palabra in titulo_lower:
+                    score += 10  # Mucho peso si está en el título
+                elif palabra in desc_lower:
+                    score += 5   # Peso medio si está en descripción
+        
+        # Puntuación por categoría
+        if any(kw in pregunta_lower for kw in keywords_evento) and anuncio['categoria'] == 'evento':
+            score += 8
+        if any(kw in pregunta_lower for kw in keywords_servicio) and anuncio['categoria'] == 'servicio':
+            score += 8
+        if any(kw in pregunta_lower for kw in keywords_producto) and anuncio['categoria'] == 'producto':
+            score += 8
+        
+        # Puntuación específica para matemáticas
+        if any(kw in pregunta_lower for kw in keywords_matematicas):
+            if any(kw in texto_completo for kw in keywords_matematicas):
+                score += 15
+        
+        if score > 0:
+            posts_relevantes.append(anuncio)
+            scores.append(score)
     
-    # Si encontramos posts relevantes, devolver esos
+    # Ordenar por score descendente
+    if posts_relevantes:
+        posts_con_score = list(zip(posts_relevantes, scores))
+        posts_con_score.sort(key=lambda x: x[1], reverse=True)
+        posts_relevantes = [p[0] for p in posts_con_score]
+    
+    return posts_relevantes
+
+def mejorar_respuesta_con_ids(respuesta, posts_relevantes, idioma):
+    """
+    Si la respuesta de la IA no incluyó IDs, los añadimos inteligentemente
+    """
+    # Tomar los primeros 3 posts más relevantes
+    posts_top = posts_relevantes[:3]
+    
+    if idioma == 'spanish':
+        ids_texto = " Específicamente: " + ", ".join([f"[ID:{p['id']}] {p['titulo']}" for p in posts_top])
+    elif idioma == 'catalan':
+        ids_texto = " Específicament: " + ", ".join([f"[ID:{p['id']}] {p['titulo']}" for p in posts_top])
+    else:
+        ids_texto = " Specifically: " + ", ".join([f"[ID:{p['id']}] {p['titulo']}" for p in posts_top])
+    
+    return respuesta + ids_texto
+
+def generar_respuesta_simple(pregunta, anuncios, idioma='english'):
+    """
+    Genera respuesta simple sin IA (fallback) - búsqueda mejorada por keywords
+    """
+    pregunta_lower = pregunta.lower()
+    
+    # Usar la función de búsqueda mejorada
+    posts_relevantes = buscar_posts_relevantes(pregunta_lower, anuncios)
+    
+    # Si encontramos posts relevantes, devolver esos con detalles
     if posts_relevantes:
         ids = [p['id'] for p in posts_relevantes[:5]]
-        if idioma == 'spanish':
-            msg = f"Encontré {len(posts_relevantes)} anuncios relevantes: "
-        elif idioma == 'catalan':
-            msg = f"He trobat {len(posts_relevantes)} anuncis rellevants: "
-        else:
-            msg = f"Found {len(posts_relevantes)} relevant posts: "
         
-        titulos = [f"[ID:{p['id']}] {p['titulo']}" for p in posts_relevantes[:5]]
-        return msg + ', '.join(titulos), ids
+        if idioma == 'spanish':
+            if len(posts_relevantes) == 1:
+                msg = f"¡Perfecto! Encontré esto: [ID:{posts_relevantes[0]['id']}] {posts_relevantes[0]['titulo']}. "
+                msg += f"Precio: {'Gratis' if posts_relevantes[0]['precio'] == 0 else '€' + str(posts_relevantes[0]['precio'])}. "
+                msg += "¡Haz click para ver más detalles!"
+            else:
+                msg = f"Encontré {len(posts_relevantes)} opciones que te pueden interesar: "
+                titulos = [f"[ID:{p['id']}] {p['titulo']}" for p in posts_relevantes[:5]]
+                msg += ', '.join(titulos) + ". ¡Haz click en cualquiera para más info!"
+        elif idioma == 'catalan':
+            if len(posts_relevantes) == 1:
+                msg = f"Perfecte! He trobat això: [ID:{posts_relevantes[0]['id']}] {posts_relevantes[0]['titulo']}. "
+                msg += f"Preu: {'Gratis' if posts_relevantes[0]['precio'] == 0 else '€' + str(posts_relevantes[0]['precio'])}. "
+                msg += "Fes click per veure més detalls!"
+            else:
+                msg = f"He trobat {len(posts_relevantes)} opcions que et poden interessar: "
+                titulos = [f"[ID:{p['id']}] {p['titulo']}" for p in posts_relevantes[:5]]
+                msg += ', '.join(titulos) + ". Fes click en qualsevol per més info!"
+        else:
+            if len(posts_relevantes) == 1:
+                msg = f"Great! I found this: [ID:{posts_relevantes[0]['id']}] {posts_relevantes[0]['titulo']}. "
+                msg += f"Price: {'Free' if posts_relevantes[0]['precio'] == 0 else '€' + str(posts_relevantes[0]['precio'])}. "
+                msg += "Click to see more details!"
+            else:
+                msg = f"I found {len(posts_relevantes)} options that might interest you: "
+                titulos = [f"[ID:{p['id']}] {p['titulo']}" for p in posts_relevantes[:5]]
+                msg += ', '.join(titulos) + ". Click any for more info!"
+        
+        return msg, ids
     
     # Si no encontramos nada específico, usar categorías
     # Contar por categorías
@@ -806,38 +901,57 @@ def generar_respuesta_simple(pregunta, anuncios, idioma='english'):
     # Extraer IDs de respuestas
     import re
     
-    # Respuestas según keywords
+    # Respuestas según keywords con IDs clicables
     if any(word in pregunta_lower for word in ['how many', 'cuantos', 'quants', 'count', 'total']):
         return t['total'], []
     
-    elif any(word in pregunta_lower for word in ['event', 'party', 'parties', 'evento', 'esdeveniments']):
+    elif any(word in pregunta_lower for word in ['event', 'party', 'parties', 'evento', 'esdeveniments', 'fiesta', 'festa']):
         if eventos:
-            ids = [e['id'] for e in eventos[:3]]
-            titulos = [f"[ID:{e['id']}] {e['titulo']}" for e in eventos[:3]]
+            ids = [e['id'] for e in eventos[:4]]
+            titulos = [f"[ID:{e['id']}] {e['titulo']}" for e in eventos[:4]]
             return t['events_found'] + ', '.join(titulos) + '. ' + t['check'], ids
         return t['no_events'], []
     
-    elif any(word in pregunta_lower for word in ['tutor', 'class', 'lesson', 'servicio', 'servei', 'help', 'ayuda']):
+    elif any(word in pregunta_lower for word in ['tutor', 'class', 'lesson', 'servicio', 'servei', 'help', 'ayuda', 'ajuda', 'mates', 'math']):
         if servicios:
-            ids = [s['id'] for s in servicios[:3]]
-            titulos = [f"[ID:{s['id']}] {s['titulo']}" for s in servicios[:3]]
+            ids = [s['id'] for s in servicios[:4]]
+            titulos = [f"[ID:{s['id']}] {s['titulo']}" for s in servicios[:4]]
             return t['services_found'] + ', '.join(titulos) + '. ' + t['contact'], ids
         return t['no_services'], []
     
-    elif any(word in pregunta_lower for word in ['room', 'apartment', 'rent', 'buy', 'producto', 'producte', 'sell', 'habitació', 'pis']):
+    elif any(word in pregunta_lower for word in ['room', 'apartment', 'rent', 'buy', 'producto', 'producte', 'sell', 'habitació', 'habitacion', 'pis']):
         if productos:
-            ids = [p['id'] for p in productos[:3]]
-            titulos = [f"[ID:{p['id']}] {p['titulo']}" for p in productos[:3]]
+            ids = [p['id'] for p in productos[:4]]
+            titulos = [f"[ID:{p['id']}] {p['titulo']}" for p in productos[:4]]
             return t['products_found'] + ', '.join(titulos) + '. ' + t['check'], ids
         return t['no_products'], []
     
-    # Respuesta genérica según idioma
+    # Respuesta genérica con algunos ejemplos clicables
+    ejemplos_ids = []
+    ejemplos_texto = []
+    
+    if eventos:
+        ejemplos_ids.append(eventos[0]['id'])
+        ejemplos_texto.append(f"[ID:{eventos[0]['id']}] {eventos[0]['titulo']}")
+    if servicios:
+        ejemplos_ids.append(servicios[0]['id'])
+        ejemplos_texto.append(f"[ID:{servicios[0]['id']}] {servicios[0]['titulo']}")
+    if productos:
+        ejemplos_ids.append(productos[0]['id'])
+        ejemplos_texto.append(f"[ID:{productos[0]['id']}] {productos[0]['titulo']}")
+    
     if idioma == 'spanish':
-        return f"Actualmente tenemos {len(anuncios)} anuncios en el tablero. ¿Sobre qué categoría te gustaría saber más?", []
+        msg = f"Tenemos {len(anuncios)} anuncios disponibles. Por ejemplo: " + ', '.join(ejemplos_texto[:3])
+        msg += ". ¡Haz click en cualquiera o pregúntame algo más específico!"
+        return msg, ejemplos_ids
     elif idioma == 'catalan':
-        return f"Actualment tenim {len(anuncios)} anuncis al tauler. Sobre quina categoria t'agradaria saber més?", []
+        msg = f"Tenim {len(anuncios)} anuncis disponibles. Per exemple: " + ', '.join(ejemplos_texto[:3])
+        msg += ". Fes click en qualsevol o pregunta'm algo més específic!"
+        return msg, ejemplos_ids
     else:
-        return f"We currently have {len(anuncios)} posts on the board. What category would you like to know more about?", []
+        msg = f"We have {len(anuncios)} posts available. For example: " + ', '.join(ejemplos_texto[:3])
+        msg += ". Click any or ask me something more specific!"
+        return msg, ejemplos_ids
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
