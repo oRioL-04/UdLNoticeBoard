@@ -4,7 +4,132 @@ import './App.css';
 
 const API_URL = 'http://localhost:5000/api';
 
+// Traducciones
+const translations = {
+  es: {
+    title: '📋 Tablero de Anuncios UdL',
+    subtitle: 'Encuentra eventos, servicios y productos en tu universidad',
+    all: 'Todos',
+    events: '🎭 Eventos',
+    services: '💼 Servicios',
+    products: '🛍️ Productos/Alquileres',
+    createPost: '➕ Crear Anuncio',
+    aiAssistant: '💬 Asistente IA',
+    calendar: 'Calendario',
+    search: '🔍 Buscar anuncios por título o descripción...',
+    noResults: 'No se encontraron resultados para',
+    noPosts: 'No hay anuncios en esta categoría',
+    free: 'Gratis',
+    price: '💰 Precio',
+    location: '📍 Ubicación',
+    contact: '📞 Contacto',
+    published: '📅 Publicado',
+    eventDate: '📅 Fecha del evento',
+    edit: '✏️ Editar',
+    delete: '🗑️ Eliminar',
+    report: '⚠️ Reportar',
+    createNew: 'Crear Nuevo Anuncio',
+    editPost: 'Editar Anuncio',
+    title_label: 'Título',
+    description: 'Descripción',
+    category: 'Categoría',
+    priceField: 'Precio (€)',
+    eventDateField: 'Fecha del Evento',
+    termsAccept: 'Acepto los',
+    termsLink: 'términos y condiciones',
+    termsText: 'Al publicar, aceptas seguir las normas universitarias y proporcionar información veraz.',
+    create: 'Crear',
+    update: 'Actualizar',
+    cancel: 'Cancelar',
+    deleteConfirm: '¿Estás seguro de que quieres eliminar este anuncio?',
+    reportConfirm: '¿Quieres reportar este anuncio como inapropiado?',
+    reportSuccess: 'Anuncio reportado. Será revisado por los administradores.',
+    termsRequired: 'Debes aceptar las condiciones de uso para continuar'
+  },
+  ca: {
+    title: '📋 Tauler d\'Anuncis UdL',
+    subtitle: 'Troba esdeveniments, serveis i productes a la teva universitat',
+    all: 'Tots',
+    events: '🎭 Esdeveniments',
+    services: '💼 Serveis',
+    products: '🛍️ Productes/Lloguers',
+    createPost: '➕ Crear Anunci',
+    aiAssistant: '💬 Assistant IA',
+    calendar: 'Calendari',
+    search: '🔍 Cercar anuncis per títol o descripció...',
+    noResults: 'No s\'han trobat resultats per',
+    noPosts: 'No hi ha anuncis en aquesta categoria',
+    free: 'Gratuït',
+    price: '💰 Preu',
+    location: '📍 Ubicació',
+    contact: '📞 Contacte',
+    published: '📅 Publicat',
+    eventDate: '📅 Data de l\'esdeveniment',
+    edit: '✏️ Editar',
+    delete: '🗑️ Eliminar',
+    report: '⚠️ Reportar',
+    createNew: 'Crear Nou Anunci',
+    editPost: 'Editar Anunci',
+    title_label: 'Títol',
+    description: 'Descripció',
+    category: 'Categoria',
+    priceField: 'Preu (€)',
+    eventDateField: 'Data de l\'Esdeveniment',
+    termsAccept: 'Accepto els',
+    termsLink: 'termes i condicions',
+    termsText: 'En publicar, acceptes seguir les normes universitàries i proporcionar informació veraç.',
+    create: 'Crear',
+    update: 'Actualitzar',
+    cancel: 'Cancel·lar',
+    deleteConfirm: 'Estàs segur que vols eliminar aquest anunci?',
+    reportConfirm: 'Vols reportar aquest anunci com a inapropiat?',
+    reportSuccess: 'Anunci reportat. Serà revisat pels administradors.',
+    termsRequired: 'Has d\'acceptar les condicions d\'ús per continuar'
+  },
+  en: {
+    title: '📋 UdL Notice Board',
+    subtitle: 'Find events, services and products at your university',
+    all: 'All',
+    events: '🎭 Events',
+    services: '💼 Services',
+    products: '🛍️ Products/Rentals',
+    createPost: '➕ Create Post',
+    aiAssistant: '💬 AI Assistant',
+    calendar: 'Calendar',
+    search: '🔍 Search posts by title or description...',
+    noResults: 'No results found for',
+    noPosts: 'No posts in this category',
+    free: 'Free',
+    price: '💰 Price',
+    location: '📍 Location',
+    contact: '📞 Contact',
+    published: '📅 Published',
+    eventDate: '📅 Event Date',
+    edit: '✏️ Edit',
+    delete: '🗑️ Delete',
+    report: '⚠️ Report',
+    createNew: 'Create New Post',
+    editPost: 'Edit Post',
+    title_label: 'Title',
+    description: 'Description',
+    category: 'Category',
+    priceField: 'Price (€)',
+    eventDateField: 'Event Date',
+    termsAccept: 'I accept the',
+    termsLink: 'terms and conditions',
+    termsText: 'By posting, you agree to follow university guidelines and provide accurate information.',
+    create: 'Create',
+    update: 'Update',
+    cancel: 'Cancel',
+    deleteConfirm: 'Are you sure you want to delete this post?',
+    reportConfirm: 'Do you want to report this post as inappropriate?',
+    reportSuccess: 'Post reported. It will be reviewed by administrators.',
+    termsRequired: 'You must accept the terms of use to continue'
+  }
+};
+
 function App() {
+  const [idioma, setIdioma] = useState('en');
   const [anuncios, setAnuncios] = useState([]);
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('todos');
   const [anuncioSeleccionado, setAnuncioSeleccionado] = useState(null);
@@ -16,7 +141,8 @@ function App() {
     precio: '',
     ubicacion: '',
     contacto: '',
-    imagen_url: ''
+    imagen_url: '',
+    fecha_evento: ''
   });
   const [aiStatus, setAiStatus] = useState({ status: 'checking', method: '' });
   const [generatingDescription, setGeneratingDescription] = useState(false);
@@ -27,6 +153,14 @@ function App() {
   const [preguntaChat, setPreguntaChat] = useState('');
   const [esperandoRespuesta, setEsperandoRespuesta] = useState(false);
   const [chatActivo, setChatActivo] = useState(false); // Para mantener el chat abierto
+  const [busqueda, setBusqueda] = useState('');
+  const [modoEdicion, setModoEdicion] = useState(false);
+  const [anuncioEditando, setAnuncioEditando] = useState(null);
+  const [aceptaCondiciones, setAceptaCondiciones] = useState(false);
+  const [mostrarCalendario, setMostrarCalendario] = useState(false);
+  const [eventosCalendario, setEventosCalendario] = useState([]);
+
+  const t = translations[idioma]; // Helper para traducciones
 
   useEffect(() => {
     cargarAnuncios();
@@ -211,9 +345,24 @@ function App() {
 
   const handleCrearAnuncio = async (e) => {
     e.preventDefault();
+    
+    if (!aceptaCondiciones) {
+      alert(t.termsRequired);
+      return;
+    }
+    
     try {
-      await axios.post(`${API_URL}/anuncios`, nuevoAnuncio);
+      if (modoEdicion && anuncioEditando) {
+        // Actualizar anuncio existente
+        await axios.put(`${API_URL}/anuncios/${anuncioEditando.id}`, nuevoAnuncio);
+      } else {
+        // Crear nuevo anuncio
+        await axios.post(`${API_URL}/anuncios`, nuevoAnuncio);
+      }
+      
       setMostrarFormulario(false);
+      setModoEdicion(false);
+      setAnuncioEditando(null);
       setNuevoAnuncio({
         titulo: '',
         descripcion: '',
@@ -221,12 +370,65 @@ function App() {
         precio: '',
         ubicacion: '',
         contacto: '',
-        imagen_url: ''
+        imagen_url: '',
+        fecha_evento: ''
       });
       setImagenPreview(null);
+      setAceptaCondiciones(false);
       cargarAnuncios();
     } catch (error) {
-      console.error('Error al crear anuncio:', error);
+      console.error('Error al crear/actualizar anuncio:', error);
+      alert('Error al procesar el anuncio. Por favor, intenta de nuevo.');
+    }
+  };
+
+  const handleEditarAnuncio = (anuncio) => {
+    setModoEdicion(true);
+    setAnuncioEditando(anuncio);
+    setNuevoAnuncio({
+      titulo: anuncio.titulo,
+      descripcion: anuncio.descripcion,
+      categoria: anuncio.categoria,
+      precio: anuncio.precio,
+      ubicacion: anuncio.ubicacion,
+      contacto: anuncio.contacto,
+      imagen_url: anuncio.imagen_url,
+      fecha_evento: anuncio.fecha_evento || ''
+    });
+    setImagenPreview(anuncio.imagen_url);
+    setAceptaCondiciones(true); // Ya aceptó al crear
+    setAnuncioSeleccionado(null);
+    setMostrarFormulario(true);
+  };
+
+  const handleEliminarAnuncio = async (id) => {
+    if (window.confirm(t.deleteConfirm)) {
+      try {
+        await axios.delete(`${API_URL}/anuncios/${id}`);
+        setAnuncioSeleccionado(null);
+        cargarAnuncios();
+      } catch (error) {
+        console.error('Error al eliminar anuncio:', error);
+        alert('Error al eliminar el anuncio. Por favor, intenta de nuevo.');
+      }
+    }
+  };
+
+  const handleReportarAnuncio = (id) => {
+    if (window.confirm(t.reportConfirm)) {
+      // Aquí podrías hacer una llamada al backend para registrar el reporte
+      alert(t.reportSuccess);
+      setAnuncioSeleccionado(null);
+    }
+  };
+
+  const cargarEventosCalendario = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/eventos/calendario`);
+      setEventosCalendario(response.data);
+      setMostrarCalendario(true);
+    } catch (error) {
+      console.error('Error al cargar eventos del calendario:', error);
     }
   };
 
@@ -251,8 +453,32 @@ function App() {
   return (
     <div className="App">
       <header className="header">
-        <h1>📋 UdL Notice Board</h1>
-        <p>Find events, services and products at your university</p>
+        <div className="header-content">
+          <div>
+            <h1>{t.title}</h1>
+            <p>{t.subtitle}</p>
+          </div>
+          <div className="language-selector">
+            <button 
+              className={idioma === 'es' ? 'lang-btn active' : 'lang-btn'}
+              onClick={() => setIdioma('es')}
+            >
+              🇪🇸 ES
+            </button>
+            <button 
+              className={idioma === 'ca' ? 'lang-btn active' : 'lang-btn'}
+              onClick={() => setIdioma('ca')}
+            >
+              <img src="/bandera-catalana.jpg" alt="CA" style={{width: '20px', height: '14px', marginRight: '5px', borderRadius: '2px'}} /> CA
+            </button>
+            <button 
+              className={idioma === 'en' ? 'lang-btn active' : 'lang-btn'}
+              onClick={() => setIdioma('en')}
+            >
+              🇬🇧 EN
+            </button>
+          </div>
+        </div>
       </header>
 
       <div className="container">
@@ -261,60 +487,79 @@ function App() {
             className={categoriaSeleccionada === 'todos' ? 'filtro-btn active' : 'filtro-btn'}
             onClick={() => setCategoriaSeleccionada('todos')}
           >
-            All
+            {t.all}
           </button>
           <button
             className={categoriaSeleccionada === 'evento' ? 'filtro-btn active' : 'filtro-btn'}
             onClick={() => setCategoriaSeleccionada('evento')}
           >
-            🎭 Events
+            {t.events}
           </button>
           <button
             className={categoriaSeleccionada === 'servicio' ? 'filtro-btn active' : 'filtro-btn'}
             onClick={() => setCategoriaSeleccionada('servicio')}
           >
-            💼 Services
+            {t.services}
           </button>
           <button
             className={categoriaSeleccionada === 'producto' ? 'filtro-btn active' : 'filtro-btn'}
             onClick={() => setCategoriaSeleccionada('producto')}
           >
-            🛍️ Products/Rentals
+            {t.products}
           </button>
           <button
             className="crear-btn"
             onClick={() => setMostrarFormulario(!mostrarFormulario)}
           >
-            ➕ Create Post
+            {t.createPost}
+          </button>
+          <button
+            className="calendar-btn"
+            onClick={cargarEventosCalendario}
+          >
+            {t.calendar}
           </button>
           <button
             className="chat-btn"
             onClick={() => setMostrarChat(!mostrarChat)}
           >
-            💬 AI Assistant
+            {t.aiAssistant}
           </button>
         </div>
 
         {mostrarFormulario && (
-          <div className="modal" onClick={() => setMostrarFormulario(false)}>
+          <div className="modal" onClick={() => {
+            setMostrarFormulario(false);
+            setModoEdicion(false);
+            setAnuncioEditando(null);
+            setAceptaCondiciones(false);
+          }}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <h2>Create New Post {aiStatus.status === 'available' && '🤖'}</h2>
+              <h2>{modoEdicion ? t.editPost : t.createNew} {aiStatus.status === 'available' && '🤖'}</h2>
               {aiStatus.status === 'available' && (
                 <div style={{background: '#f0f9ff', padding: '8px 12px', borderRadius: '6px', marginBottom: '12px', fontSize: '0.85rem', color: '#0369a1'}}>
                   ✨ AI description generator available
                 </div>
               )}
               <form onSubmit={handleCrearAnuncio}>
-                <input
-                  type="text"
-                  placeholder="Title"
-                  value={nuevoAnuncio.titulo}
-                  onChange={(e) => setNuevoAnuncio({...nuevoAnuncio, titulo: e.target.value})}
-                  required
-                />
                 <div style={{position: 'relative'}}>
+                  <label style={{display: 'block', marginBottom: '0.3rem', fontWeight: '600', color: '#333'}}>
+                    {t.title_label} <span style={{color: '#ff4d4f'}}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder={t.title_label}
+                    value={nuevoAnuncio.titulo}
+                    onChange={(e) => setNuevoAnuncio({...nuevoAnuncio, titulo: e.target.value})}
+                    required
+                  />
+                </div>
+                <div style={{position: 'relative'}}>
+                  <label style={{display: 'block', marginBottom: '0.3rem', fontWeight: '600', color: '#333'}}>
+                    {t.description} <span style={{color: '#ff4d4f'}}>*</span>
+                  </label>
                   <textarea
-                    placeholder="Description"
+                    placeholder={t.description}
                     value={nuevoAnuncio.descripcion}
                     onChange={(e) => setNuevoAnuncio({...nuevoAnuncio, descripcion: e.target.value})}
                     required
@@ -346,29 +591,57 @@ function App() {
                     🤖 AI is writing a description for you...
                   </small>
                 )}
-                <select
-                  value={nuevoAnuncio.categoria}
-                  onChange={(e) => setNuevoAnuncio({...nuevoAnuncio, categoria: e.target.value})}
-                >
-                  <option value="evento">🎭 Event</option>
-                  <option value="servicio">💼 Service</option>
-                  <option value="producto">🛍️ Product/Rental</option>
-                </select>
-                <input
-                  type="number"
-                  placeholder="Price (€)"
-                  value={nuevoAnuncio.precio}
-                  onChange={(e) => setNuevoAnuncio({...nuevoAnuncio, precio: e.target.value})}
-                />
+                <div>
+                  <label style={{display: 'block', marginBottom: '0.3rem', fontWeight: '600', color: '#333'}}>
+                    {t.category} <span style={{color: '#ff4d4f'}}>*</span>
+                  </label>
+                  <select
+                    value={nuevoAnuncio.categoria}
+                    onChange={(e) => setNuevoAnuncio({...nuevoAnuncio, categoria: e.target.value})}
+                  >
+                    <option value="evento">{t.events}</option>
+                    <option value="servicio">{t.services}</option>
+                    <option value="producto">{t.products}</option>
+                  </select>
+                </div>
+                
+                {nuevoAnuncio.categoria === 'evento' && (
+                  <div>
+                    <label style={{display: 'block', marginBottom: '0.3rem', fontWeight: '600', color: '#333'}}>
+                      {t.eventDateField}
+                    </label>
+                    <input
+                      type="date"
+                      value={nuevoAnuncio.fecha_evento}
+                      onChange={(e) => setNuevoAnuncio({...nuevoAnuncio, fecha_evento: e.target.value})}
+                    />
+                  </div>
+                )}
+                
+                <div>
+                  <label style={{display: 'block', marginBottom: '0.3rem', fontWeight: '600', color: '#333'}}>
+                    {t.priceField}
+                  </label>
+                  <input
+                    type="number"
+                    placeholder={t.priceField}
+                    value={nuevoAnuncio.precio}
+                    onChange={(e) => setNuevoAnuncio({...nuevoAnuncio, precio: e.target.value})}
+                  />
+                  <small style={{display: 'block', marginTop: '0.3rem', color: '#666', fontSize: '0.75rem'}}>
+                    {idioma === 'es' ? 'Déjalo vacío si es gratis' : idioma === 'ca' ? 'Deixa-ho buit si és gratuït' : 'Leave empty if free'}
+                  </small>
+                </div>
+                
                 <input
                   type="text"
-                  placeholder="Location"
+                  placeholder={t.location}
                   value={nuevoAnuncio.ubicacion}
                   onChange={(e) => setNuevoAnuncio({...nuevoAnuncio, ubicacion: e.target.value})}
                 />
                 <input
                   type="text"
-                  placeholder="Contact (email or phone)"
+                  placeholder={t.contact}
                   value={nuevoAnuncio.contacto}
                   onChange={(e) => setNuevoAnuncio({...nuevoAnuncio, contacto: e.target.value})}
                 />
@@ -431,11 +704,80 @@ function App() {
                   </small>
                 </div>
 
+                <div style={{marginTop: '1rem', padding: '1rem', background: '#f9f9f9', borderRadius: '8px'}}>
+                  <label style={{display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '0.5rem'}}>
+                    <input
+                      type="checkbox"
+                      checked={aceptaCondiciones}
+                      onChange={(e) => setAceptaCondiciones(e.target.checked)}
+                      required
+                      style={{width: 'auto', cursor: 'pointer'}}
+                    />
+                    <span style={{fontSize: '0.9rem', color: '#333'}}>
+                      {t.termsAccept} <a href="#" style={{color: '#8c0f57', textDecoration: 'underline'}}>{t.termsLink}</a> <span style={{color: '#ff4d4f'}}>*</span>
+                    </span>
+                  </label>
+                  <small style={{display: 'block', marginTop: '0.5rem', color: '#666', fontSize: '0.75rem', marginLeft: '1.5rem'}}>
+                    {t.termsText}
+                  </small>
+                </div>
+
                 <div className="form-buttons">
-                  <button type="submit" className="btn-submit">Create</button>
-                  <button type="button" className="btn-cancel" onClick={() => setMostrarFormulario(false)}>Cancel</button>
+                  <button type="submit" className="btn-submit" disabled={!aceptaCondiciones}>
+                    {modoEdicion ? t.update : t.create}
+                  </button>
+                  <button type="button" className="btn-cancel" onClick={() => {
+                    setMostrarFormulario(false);
+                    setModoEdicion(false);
+                    setAnuncioEditando(null);
+                    setAceptaCondiciones(false);
+                  }}>{t.cancel}</button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {mostrarCalendario && (
+          <div className="modal" onClick={() => setMostrarCalendario(false)}>
+            <div className="modal-content calendario-modal" onClick={(e) => e.stopPropagation()}>
+              <button className="close-btn" onClick={() => setMostrarCalendario(false)}>✕</button>
+              <h2>📅 {t.calendar}</h2>
+              <div className="eventos-calendario">
+                {eventosCalendario.length === 0 ? (
+                  <p style={{textAlign: 'center', padding: '2rem', color: '#999'}}>
+                    {idioma === 'es' ? 'No hay eventos programados' : idioma === 'ca' ? 'No hi ha esdeveniments programats' : 'No scheduled events'}
+                  </p>
+                ) : (
+                  eventosCalendario.map((evento) => (
+                    <div 
+                      key={evento.id} 
+                      className="evento-calendario-item"
+                      onClick={() => {
+                        setAnuncioSeleccionado(evento);
+                        setMostrarCalendario(false);
+                      }}
+                    >
+                      <div className="evento-fecha">
+                        <div className="fecha-dia">
+                          {new Date(evento.fecha_evento).getDate()}
+                        </div>
+                        <div className="fecha-mes">
+                          {new Date(evento.fecha_evento).toLocaleDateString(idioma, { month: 'short' })}
+                        </div>
+                      </div>
+                      <div className="evento-info">
+                        <h3>{evento.titulo}</h3>
+                        <p>{evento.descripcion.substring(0, 100)}...</p>
+                        <div className="evento-detalles">
+                          <span>📍 {evento.ubicacion}</span>
+                          <span>{evento.precio === 0 ? t.free : `€${evento.precio}`}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -527,7 +869,7 @@ function App() {
                   disabled={!preguntaChat.trim() || esperandoRespuesta}
                   className="chat-send-btn"
                 >
-                  {esperandoRespuesta ? '⏳' : '📤'}
+                  {esperandoRespuesta ? '⏳' : '➤'}
                 </button>
               </form>
             </div>
@@ -550,20 +892,76 @@ function App() {
               </div>
               <p className="descripcion">{anuncioSeleccionado.descripcion}</p>
               <div className="detalle-info">
-                <p><strong>💰 Price:</strong> {anuncioSeleccionado.precio === 0 ? 'Free' : `€${anuncioSeleccionado.precio}`}</p>
-                <p><strong>📍 Location:</strong> {anuncioSeleccionado.ubicacion}</p>
-                <p><strong>📞 Contact:</strong> {anuncioSeleccionado.contacto}</p>
-                <p><strong>📅 Published:</strong> {new Date(anuncioSeleccionado.fecha_creacion).toLocaleDateString('en-US')}</p>
+                <p><strong>{t.price}:</strong> {anuncioSeleccionado.precio === 0 ? t.free : `€${anuncioSeleccionado.precio}`}</p>
+                <p><strong>{t.location}:</strong> {anuncioSeleccionado.ubicacion}</p>
+                <p><strong>{t.contact}:</strong> {anuncioSeleccionado.contacto}</p>
+                {anuncioSeleccionado.fecha_evento && (
+                  <p><strong>{t.eventDate}:</strong> {new Date(anuncioSeleccionado.fecha_evento).toLocaleDateString(idioma, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                )}
+                <p><strong>{t.published}:</strong> {new Date(anuncioSeleccionado.fecha_creacion).toLocaleDateString(idioma)}</p>
+              </div>
+              <div className="detalle-acciones">
+                <button 
+                  className="btn-editar"
+                  onClick={() => handleEditarAnuncio(anuncioSeleccionado)}
+                >
+                  {t.edit}
+                </button>
+                <button 
+                  className="btn-eliminar"
+                  onClick={() => handleEliminarAnuncio(anuncioSeleccionado.id)}
+                >
+                  {t.delete}
+                </button>
+                <button 
+                  className="btn-reportar"
+                  onClick={() => handleReportarAnuncio(anuncioSeleccionado.id)}
+                >
+                  {t.report}
+                </button>
               </div>
             </div>
           </div>
         )}
 
+        <div className="buscador-container">
+          <input
+            type="text"
+            placeholder={t.search}
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            className="buscador-input"
+          />
+          {busqueda && (
+            <button 
+              className="limpiar-busqueda-btn"
+              onClick={() => setBusqueda('')}
+              title="Clear search"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+
         <div className="anuncios-grid">
-          {anuncios.length === 0 ? (
-            <p className="no-anuncios">No posts in this category</p>
+          {anuncios.filter(anuncio => {
+            if (!busqueda) return true;
+            const searchLower = busqueda.toLowerCase();
+            return anuncio.titulo.toLowerCase().includes(searchLower) || 
+                   anuncio.descripcion.toLowerCase().includes(searchLower) ||
+                   anuncio.ubicacion.toLowerCase().includes(searchLower);
+          }).length === 0 ? (
+            <p className="no-anuncios">
+              {busqueda ? `${t.noResults} "${busqueda}"` : t.noPosts}
+            </p>
           ) : (
-            anuncios.map((anuncio) => (
+            anuncios.filter(anuncio => {
+              if (!busqueda) return true;
+              const searchLower = busqueda.toLowerCase();
+              return anuncio.titulo.toLowerCase().includes(searchLower) || 
+                     anuncio.descripcion.toLowerCase().includes(searchLower) ||
+                     anuncio.ubicacion.toLowerCase().includes(searchLower);
+            }).map((anuncio) => (
               <div 
                 key={anuncio.id} 
                 className="anuncio-card"

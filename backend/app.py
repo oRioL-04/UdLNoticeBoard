@@ -42,31 +42,34 @@ def init_db():
             ubicacion TEXT,
             fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             contacto TEXT,
-            imagen_url TEXT
+            imagen_url TEXT,
+            fecha_evento DATE
         )
     ''')
     
     # Insertar datos de ejemplo
     cursor.execute('SELECT COUNT(*) FROM anuncios')
     if cursor.fetchone()[0] == 0:
+        from datetime import timedelta
+        hoy = datetime.now()
         anuncios_ejemplo = [
-            ('University Party - Welcome 2025', 'Great welcome party for new students. Live DJ, drinks and amazing atmosphere. Date: November 20th, 23:00h', 'evento', 5.00, 'UdL Campus Pub', datetime.now(), 'party@udl.cat', 'https://picsum.photos/300/200?random=1'),
-            ('Room in Shared Apartment', 'Large room near UdL, 3 bedrooms, fiber internet, utilities included. Available from December', 'producto', 250.00, '5 min from UdL', datetime.now(), '666123456', 'https://picsum.photos/300/200?random=2'),
-            ('Tutoring Classes - Calculus I', '4th year student offers private Calculus I classes. You will pass for sure! Small groups or individual', 'servicio', 15.00, 'UdL Campus', datetime.now(), 'calculus@student.udl.cat', 'https://picsum.photos/300/200?random=3'),
-            ('Complete Programming Notes', 'Selling complete OOP and Data Structures notes. Includes solved exercises and examples', 'producto', 25.00, 'UdL', datetime.now(), 'notes@udl.cat', 'https://picsum.photos/300/200?random=4'),
-            ('Deadline Reminder - Final Project', 'Reminder: Deadline to submit the Final Project is November 30th. Don\'t forget to upload your work to the platform', 'evento', 0.00, 'UdL Secretary', datetime.now(), 'secretary@udl.cat', 'https://picsum.photos/300/200?random=5'),
-            ('Cross-Curricular Course - Digital Photography', 'Cross-curricular course on digital photography. Limited places. Registration open until November 25th', 'evento', 0.00, 'Faculty of Fine Arts', datetime.now(), 'crosscurricular@udl.cat', 'https://picsum.photos/300/200?random=6'),
-            ('English B2 Classes', 'Cambridge B2 exam preparation. Native teacher with experience. Groups of maximum 4 people', 'servicio', 20.00, 'Campus Area', datetime.now(), 'english@udl.cat', 'https://picsum.photos/300/200?random=7'),
-            ('Complete Apartment Rental', '2 bedroom apartment near the university. Furnished, with appliances. Ideal for 2 students', 'producto', 500.00, 'C/ Jaume II, Lleida', datetime.now(), '666789012', 'https://picsum.photos/300/200?random=8'),
-            ('Talk: Computer Science Career Paths', 'Informative event about career paths in the technology sector. With invited companies. Date: November 28th', 'evento', 0.00, 'UdL Main Hall', datetime.now(), 'events@eps.udl.cat', 'https://picsum.photos/300/200?random=9'),
-            ('Textbooks - Engineering', 'Selling 2nd year Computer Engineering books. Like new. Price negotiable if you buy several', 'producto', 45.00, 'UdL', datetime.now(), '666555444', 'https://picsum.photos/300/200?random=10'),
-            ('Statistics Classes', 'Mathematics student offers Statistics and Probability classes. All levels. Teaching experience', 'servicio', 18.00, 'UdL Campus', datetime.now(), 'statistics@udl.cat', 'https://picsum.photos/300/200?random=11'),
-            ('University Football Tournament', 'Registration open for inter-faculty tournament. Teams of 7 players. Prizes for winners!', 'evento', 10.00, 'UdL Sports Center', datetime.now(), 'sports@udl.cat', 'https://picsum.photos/300/200?random=12'),
+            ('University Party - Welcome 2025', 'Great welcome party for new students. Live DJ, drinks and amazing atmosphere. Date: November 20th, 23:00h', 'evento', 5.00, 'UdL Campus Pub', hoy, 'party@udl.cat', 'https://picsum.photos/300/200?random=1', (hoy + timedelta(days=5)).strftime('%Y-%m-%d')),
+            ('Room in Shared Apartment', 'Large room near UdL, 3 bedrooms, fiber internet, utilities included. Available from December', 'producto', 250.00, '5 min from UdL', hoy, '666123456', 'https://picsum.photos/300/200?random=2', None),
+            ('Tutoring Classes - Calculus I', '4th year student offers private Calculus I classes. You will pass for sure! Small groups or individual', 'servicio', 15.00, 'UdL Campus', hoy, 'calculus@student.udl.cat', 'https://picsum.photos/300/200?random=3', None),
+            ('Complete Programming Notes', 'Selling complete OOP and Data Structures notes. Includes solved exercises and examples', 'producto', 25.00, 'UdL', hoy, 'notes@udl.cat', 'https://picsum.photos/300/200?random=4', None),
+            ('Deadline Reminder - Final Project', 'Reminder: Deadline to submit the Final Project is November 30th. Don\'t forget to upload your work to the platform', 'evento', 0.00, 'UdL Secretary', hoy, 'secretary@udl.cat', 'https://picsum.photos/300/200?random=5', (hoy + timedelta(days=10)).strftime('%Y-%m-%d')),
+            ('Cross-Curricular Course - Digital Photography', 'Cross-curricular course on digital photography. Limited places. Registration open until November 25th', 'evento', 0.00, 'Faculty of Fine Arts', hoy, 'crosscurricular@udl.cat', 'https://picsum.photos/300/200?random=6', (hoy + timedelta(days=15)).strftime('%Y-%m-%d')),
+            ('English B2 Classes', 'Cambridge B2 exam preparation. Native teacher with experience. Groups of maximum 4 people', 'servicio', 20.00, 'Campus Area', hoy, 'english@udl.cat', 'https://picsum.photos/300/200?random=7', None),
+            ('Complete Apartment Rental', '2 bedroom apartment near the university. Furnished, with appliances. Ideal for 2 students', 'producto', 500.00, 'C/ Jaume II, Lleida', hoy, '666789012', 'https://picsum.photos/300/200?random=8', None),
+            ('Talk: Computer Science Career Paths', 'Informative event about career paths in the technology sector. With invited companies. Date: November 28th', 'evento', 0.00, 'UdL Main Hall', hoy, 'events@eps.udl.cat', 'https://picsum.photos/300/200?random=9', (hoy + timedelta(days=20)).strftime('%Y-%m-%d')),
+            ('Textbooks - Engineering', 'Selling 2nd year Computer Engineering books. Like new. Price negotiable if you buy several', 'producto', 45.00, 'UdL', hoy, '666555444', 'https://picsum.photos/300/200?random=10', None),
+            ('Statistics Classes', 'Mathematics student offers Statistics and Probability classes. All levels. Teaching experience', 'servicio', 18.00, 'UdL Campus', hoy, 'statistics@udl.cat', 'https://picsum.photos/300/200?random=11', None),
+            ('University Football Tournament', 'Registration open for inter-faculty tournament. Teams of 7 players. Prizes for winners!', 'evento', 10.00, 'UdL Sports Center', hoy, 'sports@udl.cat', 'https://picsum.photos/300/200?random=12', (hoy + timedelta(days=25)).strftime('%Y-%m-%d')),
         ]
         
         cursor.executemany('''
-            INSERT INTO anuncios (titulo, descripcion, categoria, precio, ubicacion, fecha_creacion, contacto, imagen_url)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO anuncios (titulo, descripcion, categoria, precio, ubicacion, fecha_creacion, contacto, imagen_url, fecha_evento)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', anuncios_ejemplo)
     
     conn.commit()
@@ -100,6 +103,19 @@ def get_anuncio(id):
     
     return jsonify(dict(anuncio))
 
+@app.route('/api/eventos/calendario', methods=['GET'])
+def get_eventos_calendario():
+    """Obtener todos los eventos con fecha para el calendario"""
+    conn = get_db_connection()
+    eventos = conn.execute('''
+        SELECT * FROM anuncios 
+        WHERE categoria = "evento" AND fecha_evento IS NOT NULL 
+        ORDER BY fecha_evento ASC
+    ''').fetchall()
+    conn.close()
+    
+    return jsonify([dict(evento) for evento in eventos])
+
 @app.route('/api/anuncios', methods=['POST'])
 def create_anuncio():
     data = request.get_json()
@@ -111,16 +127,17 @@ def create_anuncio():
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        INSERT INTO anuncios (titulo, descripcion, categoria, precio, ubicacion, contacto, imagen_url)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO anuncios (titulo, descripcion, categoria, precio, ubicacion, contacto, imagen_url, fecha_evento)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
         data['titulo'],
         data['descripcion'],
         data['categoria'],
-        data.get('precio', 0),
+        float(data.get('precio', 0)) if data.get('precio') else 0,
         data.get('ubicacion', ''),
         data.get('contacto', ''),
-        data.get('imagen_url', 'https://picsum.photos/300/200?random=99')
+        data.get('imagen_url', 'https://picsum.photos/300/200?random=99'),
+        data.get('fecha_evento', None)
     ))
     
     anuncio_id = cursor.lastrowid
@@ -128,6 +145,41 @@ def create_anuncio():
     conn.close()
     
     return jsonify({'id': anuncio_id, 'message': 'Anuncio creado correctamente'}), 201
+
+@app.route('/api/anuncios/<int:id>', methods=['PUT'])
+def update_anuncio(id):
+    data = request.get_json()
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Verificar que el anuncio existe
+    anuncio = cursor.execute('SELECT * FROM anuncios WHERE id = ?', (id,)).fetchone()
+    if anuncio is None:
+        conn.close()
+        return jsonify({'error': 'Anuncio no encontrado'}), 404
+    
+    # Actualizar campos
+    cursor.execute('''
+        UPDATE anuncios 
+        SET titulo = ?, descripcion = ?, categoria = ?, precio = ?, ubicacion = ?, contacto = ?, imagen_url = ?, fecha_evento = ?
+        WHERE id = ?
+    ''', (
+        data.get('titulo', anuncio['titulo']),
+        data.get('descripcion', anuncio['descripcion']),
+        data.get('categoria', anuncio['categoria']),
+        float(data.get('precio', anuncio['precio'])) if data.get('precio') else 0,
+        data.get('ubicacion', anuncio['ubicacion']),
+        data.get('contacto', anuncio['contacto']),
+        data.get('imagen_url', anuncio['imagen_url']),
+        data.get('fecha_evento', anuncio.get('fecha_evento')),
+        id
+    ))
+    
+    conn.commit()
+    conn.close()
+    
+    return jsonify({'message': 'Anuncio actualizado correctamente'}), 200
 
 @app.route('/api/anuncios/<int:id>', methods=['DELETE'])
 def delete_anuncio(id):
