@@ -714,7 +714,7 @@ function App() {
                       style={{width: 'auto', cursor: 'pointer'}}
                     />
                     <span style={{fontSize: '0.9rem', color: '#333'}}>
-                      {t.termsAccept} <a href="#" style={{color: '#8c0f57', textDecoration: 'underline'}}>{t.termsLink}</a> <span style={{color: '#ff4d4f'}}>*</span>
+                      {t.termsAccept} <a href="https://www.qad.com/documents/legal/terms-spain.pdf" target="_blank" rel="noopener noreferrer" style={{color: '#8c0f57', textDecoration: 'underline'}}>{t.termsLink}</a> <span style={{color: '#ff4d4f'}}>*</span>
                     </span>
                   </label>
                   <small style={{display: 'block', marginTop: '0.5rem', color: '#666', fontSize: '0.75rem', marginLeft: '1.5rem'}}>
