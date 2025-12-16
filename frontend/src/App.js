@@ -7,27 +7,27 @@ const API_URL = 'http://localhost:5000/api';
 // Traducciones
 const translations = {
   es: {
-    title: '📋 Tablero de Anuncios UdL',
+    title: 'Tablero de Anuncios UdL',
     subtitle: 'Encuentra eventos, servicios y productos en tu universidad',
     all: 'Todos',
     events: '🎭 Eventos',
     services: '💼 Servicios',
     products: '🛍️ Productos/Alquileres',
-    createPost: '➕ Crear Anuncio',
-    aiAssistant: '💬 Asistente IA',
+    createPost: 'Crear Anuncio',
+    aiAssistant: 'Asistente IA',
     calendar: 'Calendario',
-    search: '🔍 Buscar anuncios por título o descripción...',
+    search: 'Buscar anuncios por título o descripción...',
     noResults: 'No se encontraron resultados para',
     noPosts: 'No hay anuncios en esta categoría',
     free: 'Gratis',
-    price: '💰 Precio',
-    location: '📍 Ubicación',
-    contact: '📞 Contacto',
-    published: '📅 Publicado',
-    eventDate: '📅 Fecha del evento',
-    edit: '✏️ Editar',
-    delete: '🗑️ Eliminar',
-    report: '⚠️ Reportar',
+    price: 'Precio',
+    location: 'Ubicación',
+    contact: 'Contacto',
+    published: 'Publicado',
+    eventDate: 'Fecha del evento',
+    edit: 'Editar',
+    delete: 'Eliminar',
+    report: 'Reportar',
     createNew: 'Crear Nuevo Anuncio',
     editPost: 'Editar Anuncio',
     title_label: 'Título',
@@ -44,30 +44,59 @@ const translations = {
     deleteConfirm: '¿Estás seguro de que quieres eliminar este anuncio?',
     reportConfirm: '¿Quieres reportar este anuncio como inapropiado?',
     reportSuccess: 'Anuncio reportado. Será revisado por los administradores.',
-    termsRequired: 'Debes aceptar las condiciones de uso para continuar'
+    termsRequired: 'Debes aceptar las condiciones de uso para continuar',
+    // Grupos
+    groups: 'Grupos',
+    myGroups: 'Mis Grupos',
+    allGroups: 'Todos los Grupos',
+    joinGroup: 'Unirse',
+    leaveGroup: 'Salir',
+    members: 'miembros',
+    schedule: 'Horario',
+    full: 'LLENO',
+    joined: 'UNIDO',
+    noGroups: 'No hay grupos disponibles',
+    noMyGroups: 'No te has unido a ningún grupo todavía',
+    joinSuccess: 'Te has unido al grupo exitosamente',
+    leaveSuccess: 'Has salido del grupo',
+    groupFull: 'El grupo está lleno',
+    leaveConfirm: '¿Estás seguro de que quieres salir de este grupo?',
+    groupChat: 'Chat del Grupo',
+    sendMessage: 'Enviar mensaje',
+    typeMessage: 'Escribe un mensaje...',
+    shareAnnouncement: 'Compartir en Grupo',
+    sharedAnnouncement: 'compartió un anuncio',
+    favorites: 'Favoritos',
+    addToFavorites: 'Añadir a favoritos',
+    removeFromFavorites: 'Quitar de favoritos',
+    noFavorites: 'No tienes favoritos todavía',
+    openChat: 'Abrir Chat',
+    shareFavorite: 'Compartir Favorito',
+    recommended: 'Recomendado para ti',
+    basedOnPreferences: 'Basado en tus preferencias'
   },
   ca: {
-    title: '📋 Tauler d\'Anuncis UdL',
+    title: 'Tauler d\'Anuncis UdL',
     subtitle: 'Troba esdeveniments, serveis i productes a la teva universitat',
     all: 'Tots',
     events: '🎭 Esdeveniments',
     services: '💼 Serveis',
     products: '🛍️ Productes/Lloguers',
-    createPost: '➕ Crear Anunci',
-    aiAssistant: '💬 Assistant IA',
+    createPost: 'Crear Anunci',
+    aiAssistant: 'Assistant IA',
     calendar: 'Calendari',
-    search: '🔍 Cercar anuncis per títol o descripció...',
+    search: 'Cercar anuncis per títol o descripció...',
     noResults: 'No s\'han trobat resultats per',
     noPosts: 'No hi ha anuncis en aquesta categoria',
     free: 'Gratuït',
-    price: '💰 Preu',
-    location: '📍 Ubicació',
-    contact: '📞 Contacte',
-    published: '📅 Publicat',
-    eventDate: '📅 Data de l\'esdeveniment',
-    edit: '✏️ Editar',
-    delete: '🗑️ Eliminar',
-    report: '⚠️ Reportar',
+    price: 'Preu',
+    location: 'Ubicació',
+    contact: 'Contacte',
+    published: 'Publicat',
+    eventDate: 'Data de l\'esdeveniment',
+    edit: 'Editar',
+    delete: 'Eliminar',
+    report: 'Reportar',
     createNew: 'Crear Nou Anunci',
     editPost: 'Editar Anunci',
     title_label: 'Títol',
@@ -84,30 +113,59 @@ const translations = {
     deleteConfirm: 'Estàs segur que vols eliminar aquest anunci?',
     reportConfirm: 'Vols reportar aquest anunci com a inapropiat?',
     reportSuccess: 'Anunci reportat. Serà revisat pels administradors.',
-    termsRequired: 'Has d\'acceptar les condicions d\'ús per continuar'
+    termsRequired: 'Has d\'acceptar les condicions d\'ús per continuar',
+    // Grupos
+    groups: 'Grups',
+    myGroups: 'Els Meus Grups',
+    allGroups: 'Tots els Grups',
+    joinGroup: 'Unir-se',
+    leaveGroup: 'Sortir',
+    members: 'membres',
+    schedule: 'Horari',
+    full: 'COMPLET',
+    joined: 'UNIT',
+    noGroups: 'No hi ha grups disponibles',
+    noMyGroups: 'No t\'has unit a cap grup encara',
+    joinSuccess: 'T\'has unit al grup exitosament',
+    leaveSuccess: 'Has sortit del grup',
+    groupFull: 'El grup està complet',
+    leaveConfirm: 'Estàs segur que vols sortir d\'aquest grup?',
+    groupChat: 'Xat del Grup',
+    sendMessage: 'Enviar missatge',
+    typeMessage: 'Escriu un missatge...',
+    shareAnnouncement: 'Compartir al Grup',
+    sharedAnnouncement: 'ha compartit un anunci',
+    favorites: 'Favorits',
+    addToFavorites: 'Afegir a favorits',
+    removeFromFavorites: 'Treure de favorits',
+    noFavorites: 'No tens favorits encara',
+    openChat: 'Obrir Xat',
+    shareFavorite: 'Compartir Favorit',
+    recommended: 'Recomanat per a tu',
+    basedOnPreferences: 'Basat en les teves preferències'
   },
   en: {
-    title: '📋 UdL Notice Board',
+    title: 'UdL Notice Board',
     subtitle: 'Find events, services and products at your university',
     all: 'All',
     events: '🎭 Events',
     services: '💼 Services',
     products: '🛍️ Products/Rentals',
-    createPost: '➕ Create Post',
-    aiAssistant: '💬 AI Assistant',
+    createPost: 'Create Post',
+    aiAssistant: 'AI Assistant',
     calendar: 'Calendar',
-    search: '🔍 Search posts by title or description...',
+    search: 'Search posts by title or description...',
     noResults: 'No results found for',
     noPosts: 'No posts in this category',
     free: 'Free',
-    price: '💰 Price',
-    location: '📍 Location',
-    contact: '📞 Contact',
-    published: '📅 Published',
-    eventDate: '📅 Event Date',
-    edit: '✏️ Edit',
-    delete: '🗑️ Delete',
-    report: '⚠️ Report',
+    price: 'Price',
+    location: 'Location',
+    contact: 'Contact',
+    published: 'Published',
+    eventDate: 'Event Date',
+    edit: 'Edit',
+    delete: 'Delete',
+    report: 'Report',
     createNew: 'Create New Post',
     editPost: 'Edit Post',
     title_label: 'Title',
@@ -124,7 +182,36 @@ const translations = {
     deleteConfirm: 'Are you sure you want to delete this post?',
     reportConfirm: 'Do you want to report this post as inappropriate?',
     reportSuccess: 'Post reported. It will be reviewed by administrators.',
-    termsRequired: 'You must accept the terms of use to continue'
+    termsRequired: 'You must accept the terms of use to continue',
+    // Grupos
+    groups: 'Groups',
+    myGroups: 'My Groups',
+    allGroups: 'All Groups',
+    joinGroup: 'Join',
+    leaveGroup: 'Leave',
+    members: 'members',
+    schedule: 'Schedule',
+    full: 'FULL',
+    joined: 'JOINED',
+    noGroups: 'No groups available',
+    noMyGroups: 'You haven\'t joined any groups yet',
+    joinSuccess: 'You have joined the group successfully',
+    leaveSuccess: 'You have left the group',
+    groupFull: 'The group is full',
+    leaveConfirm: 'Are you sure you want to leave this group?',
+    groupChat: 'Group Chat',
+    sendMessage: 'Send message',
+    typeMessage: 'Type a message...',
+    shareAnnouncement: 'Share to Group',
+    sharedAnnouncement: 'shared an announcement',
+    favorites: 'Favorites',
+    addToFavorites: 'Add to favorites',
+    removeFromFavorites: 'Remove from favorites',
+    noFavorites: 'You don\'t have any favorites yet',
+    openChat: 'Open Chat',
+    shareFavorite: 'Share Favorite',
+    recommended: 'Recommended for you',
+    basedOnPreferences: 'Based on your preferences'
   }
 };
 
@@ -159,6 +246,19 @@ function App() {
   const [aceptaCondiciones, setAceptaCondiciones] = useState(false);
   const [mostrarCalendario, setMostrarCalendario] = useState(false);
   const [eventosCalendario, setEventosCalendario] = useState([]);
+  const [mostrarGrupos, setMostrarGrupos] = useState(false);
+  const [vistaGrupos, setVistaGrupos] = useState('todos'); // 'todos' o 'mis-grupos'
+  const [grupos, setGrupos] = useState([]);
+  const [grupoSeleccionado, setGrupoSeleccionado] = useState(null);
+  const [mensajesGrupo, setMensajesGrupo] = useState([]);
+  const [nuevoMensaje, setNuevoMensaje] = useState('');
+  const [favoritos, setFavoritos] = useState([]);
+  const [mostrarFavoritos, setMostrarFavoritos] = useState(false);
+  const [mostrarChatGrupo, setMostrarChatGrupo] = useState(false);
+  const [preferenciasUsuario, setPreferenciasUsuario] = useState(() => {
+    const saved = localStorage.getItem('preferenciasUsuario');
+    return saved ? JSON.parse(saved) : { evento: 0, servicio: 0, producto: 0 };
+  });
 
   const t = translations[idioma]; // Helper para traducciones
 
@@ -432,6 +532,164 @@ function App() {
     }
   };
 
+  const cargarGrupos = async () => {
+    try {
+      const endpoint = vistaGrupos === 'mis-grupos' ? `${API_URL}/grupos/mis-grupos` : `${API_URL}/grupos`;
+      const response = await axios.get(endpoint);
+      setGrupos(response.data);
+    } catch (error) {
+      console.error('Error al cargar grupos:', error);
+    }
+  };
+
+  const abrirGrupos = () => {
+    setVistaGrupos('todos');
+    setMostrarGrupos(true);
+    cargarGrupos();
+  };
+
+  const handleUnirseGrupo = async (grupoId) => {
+    try {
+      await axios.post(`${API_URL}/grupos/${grupoId}/unirse`);
+      alert(t.joinSuccess);
+      cargarGrupos();
+    } catch (error) {
+      if (error.response && error.response.data.error) {
+        alert(error.response.data.error);
+      } else {
+        console.error('Error al unirse al grupo:', error);
+      }
+    }
+  };
+
+  const handleSalirGrupo = async (grupoId) => {
+    if (window.confirm(t.leaveConfirm)) {
+      try {
+        await axios.post(`${API_URL}/grupos/${grupoId}/salir`);
+        alert(t.leaveSuccess);
+        if (grupoSeleccionado && grupoSeleccionado.id === grupoId) {
+          setGrupoSeleccionado(null);
+        }
+        cargarGrupos();
+      } catch (error) {
+        console.error('Error al salir del grupo:', error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (mostrarGrupos) {
+      cargarGrupos();
+    }
+  }, [vistaGrupos, mostrarGrupos]);
+
+  useEffect(() => {
+    if (grupoSeleccionado) {
+      cargarMensajesGrupo(grupoSeleccionado.id);
+    }
+  }, [grupoSeleccionado]);
+
+  const cargarMensajesGrupo = async (grupoId) => {
+    try {
+      const response = await axios.get(`${API_URL}/grupos/${grupoId}/mensajes`);
+      setMensajesGrupo(response.data);
+    } catch (error) {
+      console.error('Error al cargar mensajes del grupo:', error);
+    }
+  };
+
+  const handleEnviarMensaje = async (e) => {
+    e.preventDefault();
+    if (!nuevoMensaje.trim() || !grupoSeleccionado) return;
+
+    try {
+      await axios.post(`${API_URL}/grupos/${grupoSeleccionado.id}/mensajes`, {
+        mensaje: nuevoMensaje
+      });
+      setNuevoMensaje('');
+      cargarMensajesGrupo(grupoSeleccionado.id);
+    } catch (error) {
+      console.error('Error al enviar mensaje:', error);
+      if (error.response && error.response.data.error) {
+        alert(error.response.data.error);
+      }
+    }
+  };
+
+  const handleCompartirAnuncio = async (anuncioId) => {
+    if (!grupoSeleccionado) return;
+
+    try {
+      await axios.post(`${API_URL}/grupos/${grupoSeleccionado.id}/mensajes`, {
+        anuncio_id: anuncioId,
+        mensaje: ''
+      });
+      cargarMensajesGrupo(grupoSeleccionado.id);
+    } catch (error) {
+      console.error('Error al compartir anuncio:', error);
+      if (error.response && error.response.data.error) {
+        alert(error.response.data.error);
+      }
+    }
+  };
+
+  const cargarFavoritos = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/favoritos`);
+      setFavoritos(response.data);
+    } catch (error) {
+      console.error('Error al cargar favoritos:', error);
+    }
+  };
+
+  const toggleFavorito = async (anuncioId, esFavorito) => {
+    try {
+      if (esFavorito) {
+        await axios.delete(`${API_URL}/favoritos/${anuncioId}`);
+      } else {
+        await axios.post(`${API_URL}/favoritos/${anuncioId}`);
+      }
+      cargarAnuncios();
+      if (mostrarFavoritos) {
+        cargarFavoritos();
+      }
+    } catch (error) {
+      console.error('Error al cambiar favorito:', error);
+    }
+  };
+
+  const verificarFavorito = async (anuncioId) => {
+    try {
+      const response = await axios.get(`${API_URL}/anuncios/${anuncioId}/es-favorito`);
+      return response.data.es_favorito;
+    } catch (error) {
+      console.error('Error al verificar favorito:', error);
+      return false;
+    }
+  };
+
+  const actualizarPreferencias = (categoria) => {
+    const nuevasPreferencias = { ...preferenciasUsuario };
+    nuevasPreferencias[categoria] = (nuevasPreferencias[categoria] || 0) + 1;
+    setPreferenciasUsuario(nuevasPreferencias);
+    localStorage.setItem('preferenciasUsuario', JSON.stringify(nuevasPreferencias));
+  };
+
+  const obtenerAnunciosRecomendados = () => {
+    if (!anuncios.length) return [];
+    
+    const categoriaFavorita = Object.keys(preferenciasUsuario).reduce((a, b) => 
+      preferenciasUsuario[a] > preferenciasUsuario[b] ? a : b
+    );
+    
+    const totalInteracciones = Object.values(preferenciasUsuario).reduce((sum, val) => sum + val, 0);
+    if (totalInteracciones === 0) return [];
+    
+    return anuncios
+      .filter(a => a.categoria === categoriaFavorita)
+      .slice(0, 3);
+  };
+
   const getCategoriaLabel = (categoria) => {
     const labels = {
       'evento': 'Events',
@@ -483,49 +741,70 @@ function App() {
 
       <div className="container">
         <div className="filtros">
-          <button
-            className={categoriaSeleccionada === 'todos' ? 'filtro-btn active' : 'filtro-btn'}
-            onClick={() => setCategoriaSeleccionada('todos')}
-          >
-            {t.all}
-          </button>
-          <button
-            className={categoriaSeleccionada === 'evento' ? 'filtro-btn active' : 'filtro-btn'}
-            onClick={() => setCategoriaSeleccionada('evento')}
-          >
-            {t.events}
-          </button>
-          <button
-            className={categoriaSeleccionada === 'servicio' ? 'filtro-btn active' : 'filtro-btn'}
-            onClick={() => setCategoriaSeleccionada('servicio')}
-          >
-            {t.services}
-          </button>
-          <button
-            className={categoriaSeleccionada === 'producto' ? 'filtro-btn active' : 'filtro-btn'}
-            onClick={() => setCategoriaSeleccionada('producto')}
-          >
-            {t.products}
-          </button>
-          <button
-            className="crear-btn"
-            onClick={() => setMostrarFormulario(!mostrarFormulario)}
-          >
-            {t.createPost}
-          </button>
-          <button
-            className="calendar-btn"
-            onClick={cargarEventosCalendario}
-          >
-            {t.calendar}
-          </button>
-          <button
-            className="chat-btn"
-            onClick={() => setMostrarChat(!mostrarChat)}
-          >
-            {t.aiAssistant}
-          </button>
+          <div className="filtros-categorias">
+            <button
+              className={categoriaSeleccionada === 'todos' ? 'filtro-btn active' : 'filtro-btn'}
+              onClick={() => setCategoriaSeleccionada('todos')}
+            >
+              {t.all}
+            </button>
+            <button
+              className={categoriaSeleccionada === 'evento' ? 'filtro-btn active' : 'filtro-btn'}
+              onClick={() => setCategoriaSeleccionada('evento')}
+            >
+              {t.events}
+            </button>
+            <button
+              className={categoriaSeleccionada === 'servicio' ? 'filtro-btn active' : 'filtro-btn'}
+              onClick={() => setCategoriaSeleccionada('servicio')}
+            >
+              {t.services}
+            </button>
+            <button
+              className={categoriaSeleccionada === 'producto' ? 'filtro-btn active' : 'filtro-btn'}
+              onClick={() => setCategoriaSeleccionada('producto')}
+            >
+              {t.products}
+            </button>
+          </div>
+          <div className="acciones-toolbar">
+            <button
+              className="crear-btn"
+              onClick={() => setMostrarFormulario(!mostrarFormulario)}
+            >
+              {t.createPost}
+            </button>
+            <button
+              className="calendar-btn"
+              onClick={cargarEventosCalendario}
+            >
+              {t.calendar}
+            </button>
+            <button
+              className="groups-btn"
+              onClick={abrirGrupos}
+            >
+              {t.groups}
+            </button>
+            <button
+              className="favorites-btn"
+              onClick={() => {
+                setMostrarFavoritos(true);
+                cargarFavoritos();
+              }}
+            >
+              {t.favorites}
+            </button>
+          </div>
         </div>
+
+        <button
+          className="chat-btn-flotante"
+          onClick={() => setMostrarChat(!mostrarChat)}
+          title={t.aiAssistant}
+        >
+          💬
+        </button>
 
         {mostrarFormulario && (
           <div className="modal" onClick={() => {
@@ -782,11 +1061,285 @@ function App() {
           </div>
         )}
 
+        {mostrarGrupos && (
+          <div className="modal" onClick={() => setMostrarGrupos(false)}>
+            <div className="modal-content grupos-modal" onClick={(e) => e.stopPropagation()}>
+              <button className="close-btn" onClick={() => setMostrarGrupos(false)}>✕</button>
+              <h2>{t.groups}</h2>
+              
+              <div className="grupos-tabs">
+                <button 
+                  className={vistaGrupos === 'todos' ? 'tab-btn active' : 'tab-btn'}
+                  onClick={() => setVistaGrupos('todos')}
+                >
+                  {t.allGroups}
+                </button>
+                <button 
+                  className={vistaGrupos === 'mis-grupos' ? 'tab-btn active' : 'tab-btn'}
+                  onClick={() => setVistaGrupos('mis-grupos')}
+                >
+                  {t.myGroups}
+                </button>
+              </div>
+
+              <div className="grupos-lista">
+                {grupos.length === 0 ? (
+                  <p style={{textAlign: 'center', padding: '2rem', color: '#999'}}>
+                    {vistaGrupos === 'mis-grupos' ? t.noMyGroups : t.noGroups}
+                  </p>
+                ) : (
+                  grupos.map((grupo) => (
+                    <div 
+                      key={grupo.id} 
+                      className="grupo-card"
+                      onClick={() => setGrupoSeleccionado(grupo)}
+                    >
+                      <img src={grupo.imagen_url} alt={grupo.nombre} className="grupo-imagen" />
+                      <div className="grupo-info">
+                        <div className="grupo-header">
+                          <h3>{grupo.nombre}</h3>
+                          <span className="grupo-categoria">{grupo.categoria}</span>
+                        </div>
+                        <p className="grupo-descripcion">{grupo.descripcion.substring(0, 100)}...</p>
+                        <div className="grupo-detalles">
+                          <span>📍 {grupo.ubicacion}</span>
+                          <span>👥 {grupo.miembros_actuales}/{grupo.max_miembros} {t.members}</span>
+                        </div>
+                        <div className="grupo-horario">
+                          {t.schedule}: {grupo.horario}
+                        </div>
+                        <div className="grupo-acciones">
+                          {grupo.es_miembro ? (
+                            <>
+                              <span className="badge-unido">{t.joined}</span>
+                              <button 
+                                className="btn-salir-grupo"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleSalirGrupo(grupo.id);
+                                }}
+                              >
+                                {t.leaveGroup}
+                              </button>
+                            </>
+                          ) : (
+                            <button 
+                              className="btn-unirse-grupo"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleUnirseGrupo(grupo.id);
+                              }}
+                              disabled={grupo.miembros_actuales >= grupo.max_miembros}
+                            >
+                              {grupo.miembros_actuales >= grupo.max_miembros ? t.full : t.joinGroup}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {grupoSeleccionado && (
+          <div className="modal" onClick={() => setGrupoSeleccionado(null)}>
+            <div className="modal-content detalle-grupo" onClick={(e) => e.stopPropagation()}>
+              <button className="close-btn" onClick={() => setGrupoSeleccionado(null)}>✕</button>
+              <img src={grupoSeleccionado.imagen_url} alt={grupoSeleccionado.nombre} />
+              <div className="detalle-header">
+                <h2>{grupoSeleccionado.nombre}</h2>
+                <span className="categoria-badge" style={{backgroundColor: '#52c41a'}}>
+                  {grupoSeleccionado.categoria}
+                </span>
+              </div>
+              <p className="descripcion">{grupoSeleccionado.descripcion}</p>
+              <div className="detalle-info">
+                <p><strong>📍 {t.location}:</strong> {grupoSeleccionado.ubicacion}</p>
+                <p><strong>{t.schedule}:</strong> {grupoSeleccionado.horario}</p>
+                <p><strong>👥 {t.members}:</strong> {grupoSeleccionado.miembros_actuales}/{grupoSeleccionado.max_miembros}</p>
+              </div>
+              
+              <div className="detalle-acciones">
+                {grupoSeleccionado.es_miembro ? (
+                  <>
+                    <button 
+                      className="btn-editar"
+                      onClick={() => {
+                        setMostrarChatGrupo(true);
+                        cargarMensajesGrupo(grupoSeleccionado.id);
+                      }}
+                    >
+                      {t.openChat}
+                    </button>
+                    <button 
+                      className="btn-eliminar"
+                      onClick={() => handleSalirGrupo(grupoSeleccionado.id)}
+                    >
+                      {t.leaveGroup}
+                    </button>
+                  </>
+                ) : (
+                  <button 
+                    className="btn-editar"
+                    onClick={() => handleUnirseGrupo(grupoSeleccionado.id)}
+                    disabled={grupoSeleccionado.miembros_actuales >= grupoSeleccionado.max_miembros}
+                  >
+                    {grupoSeleccionado.miembros_actuales >= grupoSeleccionado.max_miembros ? t.full : t.joinGroup}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {mostrarFavoritos && (
+          <div className="modal" onClick={() => setMostrarFavoritos(false)}>
+            <div className="modal-content favoritos-modal" onClick={(e) => e.stopPropagation()}>
+              <button className="close-btn" onClick={() => setMostrarFavoritos(false)}>✕</button>
+              <h2>{t.favorites}</h2>
+              {grupoSeleccionado && (
+                <p style={{textAlign: 'center', padding: '1rem', background: '#f0f9ff', borderRadius: '8px', marginBottom: '1rem', color: '#0369a1'}}>
+                  Haz click en un favorito para compartirlo en el chat de "{grupoSeleccionado.nombre}"
+                </p>
+              )}
+              
+              <div className="favoritos-grid">
+                {favoritos.length === 0 ? (
+                  <p style={{textAlign: 'center', padding: '2rem', color: '#999'}}>
+                    {t.noFavorites}
+                  </p>
+                ) : (
+                  favoritos.map((anuncio) => (
+                    <div 
+                      key={anuncio.id} 
+                      className="anuncio-card"
+                      onClick={async () => {
+                        if (grupoSeleccionado) {
+                          await handleCompartirAnuncio(anuncio.id);
+                          setMostrarFavoritos(false);
+                          setMostrarChatGrupo(true);
+                        } else {
+                          setAnuncioSeleccionado(anuncio);
+                          setMostrarFavoritos(false);
+                        }
+                      }}
+                    >
+                      <div className="anuncio-card-clickable">
+                        <img src={anuncio.imagen_url} alt={anuncio.titulo} />
+                        <div className="anuncio-content">
+                          <div className="anuncio-header">
+                            <h3>{anuncio.titulo}</h3>
+                            <span 
+                              className="categoria-badge"
+                              style={{backgroundColor: getCategoriaColor(anuncio.categoria)}}
+                            >
+                              {getCategoriaLabel(anuncio.categoria)}
+                            </span>
+                          </div>
+                          <p className="descripcion-corta">
+                            {anuncio.descripcion.length > 80 
+                              ? anuncio.descripcion.substring(0, 80) + '...' 
+                              : anuncio.descripcion}
+                          </p>
+                          <div className="anuncio-footer">
+                            <span className="precio">
+                              {anuncio.precio === 0 ? t.free : `€${anuncio.precio}`}
+                            </span>
+                            <span className="ubicacion">📍 {anuncio.ubicacion}</span>
+                          </div>
+                        </div>
+                      </div>
+                      {!grupoSeleccionado && (
+                        <button 
+                          className="btn-remove-favorito"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleFavorito(anuncio.id, true);
+                          }}
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {mostrarChatGrupo && grupoSeleccionado && (
+          <div className="modal" onClick={() => setMostrarChatGrupo(false)}>
+            <div className="modal-content chat-grupo-modal" onClick={(e) => e.stopPropagation()}>
+              <button className="close-btn" onClick={() => setMostrarChatGrupo(false)}>✕</button>
+              <h2>{t.groupChat} - {grupoSeleccionado.nombre}</h2>
+              
+              <div className="chat-container-grande">
+                <div className="mensajes-grupo-grande">
+                  {mensajesGrupo.map((mensaje, idx) => (
+                    <div key={idx} className="mensaje-item">
+                      {mensaje.anuncio_id ? (
+                        <div className="mensaje-anuncio-compartido">
+                          <p className="mensaje-texto">
+                            <strong>Usuario {mensaje.usuario_id}</strong> {t.sharedAnnouncement}
+                          </p>
+                          <div className="anuncio-compartido-preview">
+                            {mensaje.anuncio_imagen && (
+                              <img src={mensaje.anuncio_imagen} alt={mensaje.anuncio_titulo} />
+                            )}
+                            <p><strong>{mensaje.anuncio_titulo}</strong></p>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="mensaje-texto-simple">
+                          <strong>Usuario {mensaje.usuario_id}:</strong> {mensaje.mensaje}
+                        </div>
+                      )}
+                      <span className="mensaje-fecha">
+                        {new Date(mensaje.fecha_creacion).toLocaleString(idioma)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="acciones-chat">
+                  <button
+                    className="btn-compartir-favorito"
+                    onClick={() => {
+                      cargarFavoritos();
+                      setMostrarChatGrupo(false);
+                      setMostrarFavoritos(true);
+                    }}
+                  >
+                    {t.shareFavorite}
+                  </button>
+                </div>
+                
+                <form onSubmit={handleEnviarMensaje} className="form-mensaje-grande">
+                  <input
+                    type="text"
+                    placeholder={t.typeMessage}
+                    value={nuevoMensaje}
+                    onChange={(e) => setNuevoMensaje(e.target.value)}
+                    className="input-mensaje"
+                  />
+                  <button type="submit" className="btn-enviar-mensaje">
+                    {t.sendMessage}
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        )}
+
         {mostrarChat && (
           <div className="modal" onClick={() => setMostrarChat(false)}>
             <div className="modal-content chat-modal" onClick={(e) => e.stopPropagation()}>
               <button className="close-btn" onClick={() => setMostrarChat(false)}>✕</button>
-              <h2>💬 AI Assistant</h2>
+              <h2>AI Assistant</h2>
               <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem'}}>
                 <p style={{fontSize: '0.9rem', color: '#666', margin: 0}}>
                   Ask me anything about the posts on the board!
@@ -919,7 +1472,71 @@ function App() {
                 >
                   {t.report}
                 </button>
+                <button 
+                  className="btn-favorito"
+                  onClick={async () => {
+                    const esFav = await verificarFavorito(anuncioSeleccionado.id);
+                    toggleFavorito(anuncioSeleccionado.id, esFav);
+                  }}
+                >
+                  ❤️ {t.favorites}
+                </button>
+                {grupoSeleccionado && (
+                  <button 
+                    className="btn-compartir"
+                    onClick={() => {
+                      handleCompartirAnuncio(anuncioSeleccionado.id);
+                      setAnuncioSeleccionado(null);
+                    }}
+                  >
+                    {t.shareAnnouncement}
+                  </button>
+                )}
               </div>
+            </div>
+          </div>
+        )}
+
+        {obtenerAnunciosRecomendados().length > 0 && !busqueda && categoriaSeleccionada === 'todos' && (
+          <div className="recomendaciones-section">
+            <h3>{t.recommended}</h3>
+            <p className="recomendaciones-subtitle">{t.basedOnPreferences}</p>
+            <div className="recomendaciones-grid">
+              {obtenerAnunciosRecomendados().map((anuncio) => (
+                <div 
+                  key={anuncio.id} 
+                  className="anuncio-card recomendado"
+                  onClick={() => {
+                    setAnuncioSeleccionado(anuncio);
+                    actualizarPreferencias(anuncio.categoria);
+                  }}
+                >
+                  <div className="badge-recomendado">⭐ {t.recommended}</div>
+                  <img src={anuncio.imagen_url} alt={anuncio.titulo} />
+                  <div className="anuncio-content">
+                    <div className="anuncio-header">
+                      <h3>{anuncio.titulo}</h3>
+                      <span 
+                        className="categoria-badge"
+                        style={{backgroundColor: getCategoriaColor(anuncio.categoria)}}
+                      >
+                        {getCategoriaLabel(anuncio.categoria)}
+                      </span>
+                    </div>
+                    <p className="descripcion-corta">
+                      {anuncio.descripcion.length > 80 
+                        ? anuncio.descripcion.substring(0, 80) + '...' 
+                        : anuncio.descripcion}
+                    </p>
+                    <div className="anuncio-footer">
+                      <span className="precio">
+                        {anuncio.precio === 0 ? t.free : `€${anuncio.precio}`}
+                      </span>
+                      <span className="ubicacion">{anuncio.ubicacion}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -965,31 +1582,48 @@ function App() {
               <div 
                 key={anuncio.id} 
                 className="anuncio-card"
-                onClick={() => setAnuncioSeleccionado(anuncio)}
               >
-                <img src={anuncio.imagen_url} alt={anuncio.titulo} />
-                <div className="anuncio-content">
-                  <div className="anuncio-header">
-                    <h3>{anuncio.titulo}</h3>
-                    <span 
-                      className="categoria-badge"
-                      style={{backgroundColor: getCategoriaColor(anuncio.categoria)}}
-                    >
-                      {getCategoriaLabel(anuncio.categoria)}
-                    </span>
-                  </div>
-                  <p className="descripcion-corta">
-                    {anuncio.descripcion.length > 80 
-                      ? anuncio.descripcion.substring(0, 80) + '...' 
-                      : anuncio.descripcion}
-                  </p>
-                  <div className="anuncio-footer">
-                    <span className="precio">
-                      {anuncio.precio === 0 ? 'Free' : `€${anuncio.precio}`}
-                    </span>
-                    <span className="ubicacion">📍 {anuncio.ubicacion}</span>
+                <div 
+                  className="anuncio-card-clickable"
+                  onClick={() => {
+                    setAnuncioSeleccionado(anuncio);
+                    actualizarPreferencias(anuncio.categoria);
+                  }}
+                >
+                  <img src={anuncio.imagen_url} alt={anuncio.titulo} />
+                  <div className="anuncio-content">
+                    <div className="anuncio-header">
+                      <h3>{anuncio.titulo}</h3>
+                      <span 
+                        className="categoria-badge"
+                        style={{backgroundColor: getCategoriaColor(anuncio.categoria)}}
+                      >
+                        {getCategoriaLabel(anuncio.categoria)}
+                      </span>
+                    </div>
+                    <p className="descripcion-corta">
+                      {anuncio.descripcion.length > 80 
+                        ? anuncio.descripcion.substring(0, 80) + '...' 
+                        : anuncio.descripcion}
+                    </p>
+                    <div className="anuncio-footer">
+                      <span className="precio">
+                        {anuncio.precio === 0 ? t.free : `€${anuncio.precio}`}
+                      </span>
+                      <span className="ubicacion">📍 {anuncio.ubicacion}</span>
+                    </div>
                   </div>
                 </div>
+                <button
+                  className="heart-favorito"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFavorito(anuncio.id, anuncio.es_favorito);
+                  }}
+                  title={anuncio.es_favorito ? t.removeFromFavorites : t.addToFavorites}
+                >
+                  {anuncio.es_favorito ? '❤️' : '🤍'}
+                </button>
               </div>
             ))
           )}

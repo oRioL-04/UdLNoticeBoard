@@ -47,6 +47,58 @@ def init_db():
         )
     ''')
     
+    # Crear tabla de grupos
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS grupos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT NOT NULL,
+            descripcion TEXT NOT NULL,
+            categoria TEXT NOT NULL,
+            max_miembros INTEGER,
+            ubicacion TEXT,
+            horario TEXT,
+            imagen_url TEXT,
+            fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    
+    # Crear tabla de miembros de grupos (usuario simulado con ID 1)
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS grupo_miembros (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            grupo_id INTEGER NOT NULL,
+            usuario_id INTEGER DEFAULT 1,
+            fecha_union TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (grupo_id) REFERENCES grupos (id)
+        )
+    ''')
+    
+    # Crear tabla de mensajes de grupos
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS grupo_mensajes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            grupo_id INTEGER NOT NULL,
+            usuario_id INTEGER DEFAULT 1,
+            mensaje TEXT NOT NULL,
+            anuncio_id INTEGER,
+            fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (grupo_id) REFERENCES grupos (id),
+            FOREIGN KEY (anuncio_id) REFERENCES anuncios (id)
+        )
+    ''')
+    
+    # Crear tabla de favoritos
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS favoritos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            usuario_id INTEGER DEFAULT 1,
+            anuncio_id INTEGER NOT NULL,
+            fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (anuncio_id) REFERENCES anuncios (id),
+            UNIQUE(usuario_id, anuncio_id)
+        )
+    ''')
+    
     # Insertar datos de ejemplo
     cursor.execute('SELECT COUNT(*) FROM anuncios')
     if cursor.fetchone()[0] == 0:
@@ -72,6 +124,25 @@ def init_db():
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', anuncios_ejemplo)
     
+    # Insertar grupos de ejemplo
+    cursor.execute('SELECT COUNT(*) FROM grupos')
+    if cursor.fetchone()[0] == 0:
+        grupos_ejemplo = [
+            ('Grupo de Repaso - Matemáticas', 'Grupo de estudio para repasar Cálculo I y II. Nos reunimos 2 veces por semana para resolver dudas y hacer ejercicios juntos.', 'Matemáticas', 8, 'Biblioteca UdL - Sala 3', 'Lunes y Miércoles 18:00-20:00', 'https://picsum.photos/300/200?random=20'),
+            ('English Conversation Club', 'Practice your English speaking skills in a relaxed environment. All levels welcome!', 'Idiomas', 12, 'Cafetería Campus', 'Martes 17:00-18:30', 'https://picsum.photos/300/200?random=21'),
+            ('Programación Python - Principiantes', 'Aprende Python desde cero. Ideal para estudiantes de primero. Trabajamos en proyectos prácticos.', 'Informática', 10, 'Aula informática B2', 'Jueves 16:00-18:00', 'https://picsum.photos/300/200?random=22'),
+            ('Grupo de Física Avanzada', 'Para estudiantes de Física II y Mecánica Cuántica. Resolvemos problemas complejos en grupo.', 'Física', 6, 'Facultad de Ciencias', 'Viernes 15:00-17:00', 'https://picsum.photos/300/200?random=23'),
+            ('Club de Lectura Universitario', 'Leemos y discutimos un libro cada mes. Actualmente: 1984 de George Orwell.', 'Cultura', 15, 'Biblioteca Central', 'Último viernes del mes 19:00', 'https://picsum.photos/300/200?random=24'),
+            ('Estadística y Probabilidad', 'Grupo de apoyo para Estadística. Compartimos apuntes y resolvemos ejercicios juntos.', 'Matemáticas', 8, 'Aula 205', 'Miércoles 17:00-19:00', 'https://picsum.photos/300/200?random=25'),
+            ('Desarrollo Web Full-Stack', 'Aprendemos React, Node.js y bases de datos. Construimos proyectos reales.', 'Informática', 10, 'Online (Discord)', 'Sábados 10:00-12:00', 'https://picsum.photos/300/200?random=26'),
+            ('Preparación TOEFL', 'Grupo intensivo de preparación para el examen TOEFL. Simulacros y estrategias.', 'Idiomas', 8, 'Aula 102', 'Lunes y Jueves 19:00-20:30', 'https://picsum.photos/300/200?random=27'),
+        ]
+        
+        cursor.executemany('''
+            INSERT INTO grupos (nombre, descripcion, categoria, max_miembros, ubicacion, horario, imagen_url)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', grupos_ejemplo)
+    
     conn.commit()
     conn.close()
 
@@ -84,9 +155,22 @@ def get_anuncios():
     conn = get_db_connection()
     
     if categoria and categoria != 'todos':
-        anuncios = conn.execute('SELECT * FROM anuncios WHERE categoria = ? ORDER BY fecha_creacion DESC', (categoria,)).fetchall()
+        anuncios = conn.execute('''
+            SELECT a.*, 
+                   CASE WHEN f.id IS NOT NULL THEN 1 ELSE 0 END as es_favorito
+            FROM anuncios a
+            LEFT JOIN favoritos f ON a.id = f.anuncio_id AND f.usuario_id = 1
+            WHERE a.categoria = ?
+            ORDER BY a.fecha_creacion DESC
+        ''', (categoria,)).fetchall()
     else:
-        anuncios = conn.execute('SELECT * FROM anuncios ORDER BY fecha_creacion DESC').fetchall()
+        anuncios = conn.execute('''
+            SELECT a.*, 
+                   CASE WHEN f.id IS NOT NULL THEN 1 ELSE 0 END as es_favorito
+            FROM anuncios a
+            LEFT JOIN favoritos f ON a.id = f.anuncio_id AND f.usuario_id = 1
+            ORDER BY a.fecha_creacion DESC
+        ''').fetchall()
     
     conn.close()
     
@@ -1004,6 +1088,263 @@ def generar_respuesta_simple(pregunta, anuncios, idioma='english'):
         msg = f"We have {len(anuncios)} posts available. For example: " + ', '.join(ejemplos_texto[:3])
         msg += ". Click any or ask me something more specific!"
         return msg, ejemplos_ids
+
+# ==================== GRUPOS ENDPOINTS ====================
+
+@app.route('/api/grupos', methods=['GET'])
+def get_grupos():
+    """Obtener todos los grupos con información de miembros"""
+    conn = get_db_connection()
+    grupos = conn.execute('SELECT * FROM grupos ORDER BY fecha_creacion DESC').fetchall()
+    
+    grupos_data = []
+    for grupo in grupos:
+        # Contar miembros actuales
+        miembros_count = conn.execute(
+            'SELECT COUNT(*) as count FROM grupo_miembros WHERE grupo_id = ?', 
+            (grupo['id'],)
+        ).fetchone()['count']
+        
+        # Verificar si el usuario actual (ID=1) es miembro
+        es_miembro = conn.execute(
+            'SELECT COUNT(*) as count FROM grupo_miembros WHERE grupo_id = ? AND usuario_id = 1',
+            (grupo['id'],)
+        ).fetchone()['count'] > 0
+        
+        grupo_dict = dict(grupo)
+        grupo_dict['miembros_actuales'] = miembros_count
+        grupo_dict['es_miembro'] = es_miembro
+        grupos_data.append(grupo_dict)
+    
+    conn.close()
+    return jsonify(grupos_data)
+
+@app.route('/api/grupos/<int:id>', methods=['GET'])
+def get_grupo(id):
+    """Obtener detalles de un grupo específico"""
+    conn = get_db_connection()
+    grupo = conn.execute('SELECT * FROM grupos WHERE id = ?', (id,)).fetchone()
+    
+    if grupo is None:
+        conn.close()
+        return jsonify({'error': 'Grupo no encontrado'}), 404
+    
+    # Contar miembros
+    miembros_count = conn.execute(
+        'SELECT COUNT(*) as count FROM grupo_miembros WHERE grupo_id = ?',
+        (id,)
+    ).fetchone()['count']
+    
+    # Verificar si el usuario es miembro
+    es_miembro = conn.execute(
+        'SELECT COUNT(*) as count FROM grupo_miembros WHERE grupo_id = ? AND usuario_id = 1',
+        (id,)
+    ).fetchone()['count'] > 0
+    
+    grupo_dict = dict(grupo)
+    grupo_dict['miembros_actuales'] = miembros_count
+    grupo_dict['es_miembro'] = es_miembro
+    
+    conn.close()
+    return jsonify(grupo_dict)
+
+@app.route('/api/grupos/<int:id>/unirse', methods=['POST'])
+def unirse_grupo(id):
+    """Unirse a un grupo"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Verificar si el grupo existe
+    grupo = cursor.execute('SELECT * FROM grupos WHERE id = ?', (id,)).fetchone()
+    if grupo is None:
+        conn.close()
+        return jsonify({'error': 'Grupo no encontrado'}), 404
+    
+    # Verificar si ya es miembro
+    ya_miembro = cursor.execute(
+        'SELECT COUNT(*) as count FROM grupo_miembros WHERE grupo_id = ? AND usuario_id = 1',
+        (id,)
+    ).fetchone()['count'] > 0
+    
+    if ya_miembro:
+        conn.close()
+        return jsonify({'error': 'Ya eres miembro de este grupo'}), 400
+    
+    # Verificar si hay espacio
+    miembros_count = cursor.execute(
+        'SELECT COUNT(*) as count FROM grupo_miembros WHERE grupo_id = ?',
+        (id,)
+    ).fetchone()['count']
+    
+    if miembros_count >= grupo['max_miembros']:
+        conn.close()
+        return jsonify({'error': 'El grupo está lleno'}), 400
+    
+    # Unirse al grupo
+    cursor.execute(
+        'INSERT INTO grupo_miembros (grupo_id, usuario_id) VALUES (?, 1)',
+        (id,)
+    )
+    conn.commit()
+    conn.close()
+    
+    return jsonify({'message': 'Te has unido al grupo exitosamente'}), 200
+
+@app.route('/api/grupos/<int:id>/salir', methods=['POST'])
+def salir_grupo(id):
+    """Salir de un grupo"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Verificar si es miembro
+    es_miembro = cursor.execute(
+        'SELECT COUNT(*) as count FROM grupo_miembros WHERE grupo_id = ? AND usuario_id = 1',
+        (id,)
+    ).fetchone()['count'] > 0
+    
+    if not es_miembro:
+        conn.close()
+        return jsonify({'error': 'No eres miembro de este grupo'}), 400
+    
+    # Salir del grupo
+    cursor.execute(
+        'DELETE FROM grupo_miembros WHERE grupo_id = ? AND usuario_id = 1',
+        (id,)
+    )
+    conn.commit()
+    conn.close()
+    
+    return jsonify({'message': 'Has salido del grupo'}), 200
+
+@app.route('/api/grupos/mis-grupos', methods=['GET'])
+def get_mis_grupos():
+    """Obtener los grupos a los que pertenece el usuario"""
+    conn = get_db_connection()
+    
+    grupos = conn.execute('''
+        SELECT g.*, COUNT(gm2.id) as miembros_actuales
+        FROM grupos g
+        INNER JOIN grupo_miembros gm ON g.id = gm.grupo_id AND gm.usuario_id = 1
+        LEFT JOIN grupo_miembros gm2 ON g.id = gm2.grupo_id
+        GROUP BY g.id
+        ORDER BY gm.fecha_union DESC
+    ''').fetchall()
+    
+    grupos_data = [dict(grupo) for grupo in grupos]
+    for grupo in grupos_data:
+        grupo['es_miembro'] = True
+    
+    conn.close()
+    return jsonify(grupos_data)
+
+# ==================== MENSAJES DE GRUPOS ====================
+
+@app.route('/api/grupos/<int:grupo_id>/mensajes', methods=['GET'])
+def get_mensajes_grupo(grupo_id):
+    """Obtener mensajes de un grupo"""
+    conn = get_db_connection()
+    
+    mensajes = conn.execute('''
+        SELECT m.*, a.titulo as anuncio_titulo, a.imagen_url as anuncio_imagen
+        FROM grupo_mensajes m
+        LEFT JOIN anuncios a ON m.anuncio_id = a.id
+        WHERE m.grupo_id = ?
+        ORDER BY m.fecha_creacion ASC
+    ''', (grupo_id,)).fetchall()
+    
+    conn.close()
+    return jsonify([dict(mensaje) for mensaje in mensajes])
+
+@app.route('/api/grupos/<int:grupo_id>/mensajes', methods=['POST'])
+def enviar_mensaje_grupo(grupo_id):
+    """Enviar mensaje a un grupo"""
+    data = request.get_json()
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Verificar que el usuario es miembro del grupo
+    es_miembro = cursor.execute(
+        'SELECT COUNT(*) as count FROM grupo_miembros WHERE grupo_id = ? AND usuario_id = 1',
+        (grupo_id,)
+    ).fetchone()['count'] > 0
+    
+    if not es_miembro:
+        conn.close()
+        return jsonify({'error': 'No eres miembro de este grupo'}), 403
+    
+    cursor.execute('''
+        INSERT INTO grupo_mensajes (grupo_id, usuario_id, mensaje, anuncio_id)
+        VALUES (?, 1, ?, ?)
+    ''', (grupo_id, data.get('mensaje', ''), data.get('anuncio_id')))
+    
+    conn.commit()
+    conn.close()
+    
+    return jsonify({'message': 'Mensaje enviado'}), 201
+
+# ==================== FAVORITOS ====================
+
+@app.route('/api/favoritos', methods=['GET'])
+def get_favoritos():
+    """Obtener anuncios favoritos del usuario"""
+    conn = get_db_connection()
+    
+    favoritos = conn.execute('''
+        SELECT a.*, 1 as es_favorito
+        FROM anuncios a
+        INNER JOIN favoritos f ON a.id = f.anuncio_id AND f.usuario_id = 1
+        ORDER BY f.fecha_creacion DESC
+    ''').fetchall()
+    
+    conn.close()
+    return jsonify([dict(fav) for fav in favoritos])
+
+@app.route('/api/favoritos/<int:anuncio_id>', methods=['POST'])
+def agregar_favorito(anuncio_id):
+    """Agregar anuncio a favoritos"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute(
+            'INSERT INTO favoritos (usuario_id, anuncio_id) VALUES (1, ?)',
+            (anuncio_id,)
+        )
+        conn.commit()
+        conn.close()
+        return jsonify({'message': 'Agregado a favoritos'}), 201
+    except sqlite3.IntegrityError:
+        conn.close()
+        return jsonify({'error': 'Ya está en favoritos'}), 400
+
+@app.route('/api/favoritos/<int:anuncio_id>', methods=['DELETE'])
+def eliminar_favorito(anuncio_id):
+    """Eliminar anuncio de favoritos"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute(
+        'DELETE FROM favoritos WHERE usuario_id = 1 AND anuncio_id = ?',
+        (anuncio_id,)
+    )
+    conn.commit()
+    conn.close()
+    
+    return jsonify({'message': 'Eliminado de favoritos'}), 200
+
+@app.route('/api/anuncios/<int:id>/es-favorito', methods=['GET'])
+def es_favorito(id):
+    """Verificar si un anuncio es favorito"""
+    conn = get_db_connection()
+    
+    es_fav = conn.execute(
+        'SELECT COUNT(*) as count FROM favoritos WHERE usuario_id = 1 AND anuncio_id = ?',
+        (id,)
+    ).fetchone()['count'] > 0
+    
+    conn.close()
+    return jsonify({'es_favorito': es_fav})
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
