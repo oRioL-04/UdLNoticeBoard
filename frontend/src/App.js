@@ -261,8 +261,26 @@ function App() {
     return saved ? JSON.parse(saved) : { evento: 0, servicio: 0, producto: 0 };
   });
   const [paginaActual, setPaginaActual] = useState(1);
+  const [modoOscuro, setModoOscuro] = useState(() => {
+    const saved = localStorage.getItem('modoOscuro');
+    return saved === 'true';
+  });
   
   const ANUNCIOS_POR_PAGINA = 9;
+  
+  const toggleModoOscuro = () => {
+    const nuevoModo = !modoOscuro;
+    setModoOscuro(nuevoModo);
+    localStorage.setItem('modoOscuro', nuevoModo);
+  };
+
+  useEffect(() => {
+    if (modoOscuro) {
+      document.body.style.backgroundColor = '#1a1a1a';
+    } else {
+      document.body.style.backgroundColor = '#f5f5f5';
+    }
+  }, [modoOscuro]);
 
   useEffect(() => {
     cargarAnuncios();
@@ -711,7 +729,7 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className={`App ${modoOscuro ? 'dark-mode' : ''}`}>
       <header className="header">
         <div className="header-content">
           <div>
@@ -719,6 +737,13 @@ function App() {
             <p>{t.subtitle}</p>
           </div>
           <div className="language-selector">
+            <button 
+              className="dark-mode-btn"
+              onClick={toggleModoOscuro}
+              title={modoOscuro ? 'Modo Claro' : 'Modo Oscuro'}
+            >
+              {modoOscuro ? '☀️' : '🌙'}
+            </button>
             <button 
               className={idioma === 'es' ? 'lang-btn active' : 'lang-btn'}
               onClick={() => setIdioma('es')}
