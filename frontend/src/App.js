@@ -217,6 +217,7 @@ const translations = {
 
 function App() {
   const [idioma, setIdioma] = useState('en');
+  const t = translations[idioma];
   const [anuncios, setAnuncios] = useState([]);
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('todos');
   const [anuncioSeleccionado, setAnuncioSeleccionado] = useState(null);
@@ -259,8 +260,9 @@ function App() {
     const saved = localStorage.getItem('preferenciasUsuario');
     return saved ? JSON.parse(saved) : { evento: 0, servicio: 0, producto: 0 };
   });
-
-  const t = translations[idioma]; // Helper para traducciones
+  const [paginaActual, setPaginaActual] = useState(1);
+  
+  const ANUNCIOS_POR_PAGINA = 9;
 
   useEffect(() => {
     cargarAnuncios();
@@ -803,7 +805,6 @@ function App() {
           onClick={() => setMostrarChat(!mostrarChat)}
           title={t.aiAssistant}
         >
-          💬
         </button>
 
         {mostrarFormulario && (
@@ -1561,24 +1562,29 @@ function App() {
         </div>
 
         <div className="anuncios-grid">
-          {anuncios.filter(anuncio => {
-            if (!busqueda) return true;
-            const searchLower = busqueda.toLowerCase();
-            return anuncio.titulo.toLowerCase().includes(searchLower) || 
-                   anuncio.descripcion.toLowerCase().includes(searchLower) ||
-                   anuncio.ubicacion.toLowerCase().includes(searchLower);
-          }).length === 0 ? (
-            <p className="no-anuncios">
-              {busqueda ? `${t.noResults} "${busqueda}"` : t.noPosts}
-            </p>
-          ) : (
-            anuncios.filter(anuncio => {
+          {(() => {
+            const anunciosFiltrados = anuncios.filter(anuncio => {
               if (!busqueda) return true;
               const searchLower = busqueda.toLowerCase();
               return anuncio.titulo.toLowerCase().includes(searchLower) || 
                      anuncio.descripcion.toLowerCase().includes(searchLower) ||
                      anuncio.ubicacion.toLowerCase().includes(searchLower);
-            }).map((anuncio) => (
+            });
+            
+            const totalPaginas = Math.ceil(anunciosFiltrados.length / ANUNCIOS_POR_PAGINA);
+            const indiceInicio = (paginaActual - 1) * ANUNCIOS_POR_PAGINA;
+            const indiceFin = indiceInicio + ANUNCIOS_POR_PAGINA;
+            const anunciosPaginados = anunciosFiltrados.slice(indiceInicio, indiceFin);
+            
+            if (anunciosFiltrados.length === 0) {
+              return (
+                <p className="no-anuncios">
+                  {busqueda ? `${t.noResults} "${busqueda}"` : t.noPosts}
+                </p>
+              );
+            }
+            
+            return anunciosPaginados.map((anuncio) => (
               <div 
                 key={anuncio.id} 
                 className="anuncio-card"
@@ -1625,10 +1631,62 @@ function App() {
                   {anuncio.es_favorito ? '❤️' : '🤍'}
                 </button>
               </div>
-            ))
-          )}
+            ));
+          })()}
         </div>
+        
+        {(() => {
+          const anunciosFiltrados = anuncios.filter(anuncio => {
+            if (!busqueda) return true;
+            const searchLower = busqueda.toLowerCase();
+            return anuncio.titulo.toLowerCase().includes(searchLower) || 
+                   anuncio.descripcion.toLowerCase().includes(searchLower) ||
+                   anuncio.ubicacion.toLowerCase().includes(searchLower);
+          });
+          const totalPaginas = Math.ceil(anunciosFiltrados.length / ANUNCIOS_POR_PAGINA);
+          
+          if (totalPaginas <= 1) return null;
+          
+          return (
+            <div className="paginacion">
+              <button 
+                className="pag-btn"
+                onClick={() => setPaginaActual(prev => Math.max(1, prev - 1))}
+                disabled={paginaActual === 1}
+              >
+                ‹
+              </button>
+              {[...Array(totalPaginas)].map((_, index) => (
+                <button
+                  key={index + 1}
+                  className={`pag-numero ${paginaActual === index + 1 ? 'active' : ''}`}
+                  onClick={() => setPaginaActual(index + 1)}
+                >
+                  {index + 1}
+                </button>
+              ))}
+              <button 
+                className="pag-btn"
+                onClick={() => setPaginaActual(prev => Math.min(totalPaginas, prev + 1))}
+                disabled={paginaActual === totalPaginas}
+              >
+                ›
+              </button>
+            </div>
+          );
+        })()}
       </div>
+      
+      <footer className="footer">
+        <div className="footer-content">
+          <div className="footer-info">
+            <h3>Universitat de Lleida</h3>
+            <p>Plaça Víctor Siurana, 1</p>
+            <p>25003 Lleida</p>
+            <p>www.udl.cat</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
