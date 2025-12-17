@@ -244,6 +244,12 @@ def update_anuncio(id):
         return jsonify({'error': 'Anuncio no encontrado'}), 404
     
     # Actualizar campos
+    precio_value = data.get('precio', anuncio['precio'])
+    if precio_value == '' or precio_value is None:
+        precio_value = 0
+    else:
+        precio_value = float(precio_value)
+    
     cursor.execute('''
         UPDATE anuncios 
         SET titulo = ?, descripcion = ?, categoria = ?, precio = ?, ubicacion = ?, contacto = ?, imagen_url = ?, fecha_evento = ?
@@ -252,11 +258,11 @@ def update_anuncio(id):
         data.get('titulo', anuncio['titulo']),
         data.get('descripcion', anuncio['descripcion']),
         data.get('categoria', anuncio['categoria']),
-        float(data.get('precio', anuncio['precio'])) if data.get('precio') else 0,
+        precio_value,
         data.get('ubicacion', anuncio['ubicacion']),
         data.get('contacto', anuncio['contacto']),
         data.get('imagen_url', anuncio['imagen_url']),
-        data.get('fecha_evento', anuncio.get('fecha_evento')),
+        data.get('fecha_evento', anuncio['fecha_evento']),
         id
     ))
     

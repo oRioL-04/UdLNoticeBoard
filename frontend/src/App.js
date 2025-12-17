@@ -721,19 +721,19 @@ function App() {
               className={idioma === 'es' ? 'lang-btn active' : 'lang-btn'}
               onClick={() => setIdioma('es')}
             >
-              🇪🇸 ES
+              ES
             </button>
             <button 
               className={idioma === 'ca' ? 'lang-btn active' : 'lang-btn'}
               onClick={() => setIdioma('ca')}
             >
-              <img src="/bandera-catalana.jpg" alt="CA" style={{width: '20px', height: '14px', marginRight: '5px', borderRadius: '2px'}} /> CA
+              CAT
             </button>
             <button 
               className={idioma === 'en' ? 'lang-btn active' : 'lang-btn'}
               onClick={() => setIdioma('en')}
             >
-              🇬🇧 EN
+              EN
             </button>
           </div>
         </div>
@@ -989,7 +989,7 @@ function App() {
                       type="checkbox"
                       checked={aceptaCondiciones}
                       onChange={(e) => setAceptaCondiciones(e.target.checked)}
-                      required
+                      required={!modoEdicion}
                       style={{width: 'auto', cursor: 'pointer'}}
                     />
                     <span style={{fontSize: '0.9rem', color: '#333'}}>
